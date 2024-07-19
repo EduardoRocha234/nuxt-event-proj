@@ -15,10 +15,14 @@ export default defineNuxtConfig({
 			viewport: 'width=device-width, initial-scale=1',
 			link: [
 				{rel: 'preconnect', href: 'https://fonts.googleapis.com'},
-				{rel: 'preconnect', href: 'https://fonts.gstatic.com'},
+				{
+					rel: 'preconnect',
+					href: 'https://fonts.gstatic.com',
+					crossorigin: 'anonymous',
+				},
 				{
 					rel: 'stylesheet',
-					href: 'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap',
+					href: 'https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap',
 				},
 			],
 		},
@@ -31,7 +35,7 @@ export default defineNuxtConfig({
 		},
 	},
 	runtimeConfig: {
-		API_BASE_URL: process.env.NUXT_API_BASE_URL
+		API_BASE_URL: process.env.NUXT_API_BASE_URL,
 	},
 	typescript: {
 		strict: true,

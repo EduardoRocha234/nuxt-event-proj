@@ -2,7 +2,7 @@
 	<div
 		class="w-full py-1 px-1 rounded-md border transition-all ease-in-out duration-200"
 		:class="{
-			'border-blue-800': inputIsFocused,
+			'border-red-800': inputIsFocused,
 		}"
 	>
 		<input
