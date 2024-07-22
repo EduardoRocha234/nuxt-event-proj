@@ -5,5 +5,6 @@ export interface IParticipant {
 	userId: string
 	user?: IUser
 	status: string
+	participantName: string
 	createdAt: string
 }

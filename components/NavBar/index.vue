@@ -2,7 +2,13 @@
 	<header
 		ref="header"
 		id="header"
-		class="px-5 py-9 relative flex flex-col font-medium justify-between text-lg transition-all ease-in duration-300 bg-blue-500 rounded-b-[3rem]"
+		class="px-5  relative flex flex-col font-medium justify-between text-lg transition-all ease-in-out duration-300 bg-blue-500"
+		:class="{
+			'rounded-b-[3rem]': navbarStore.searchBarIsVisible,
+			'py-9': navbarStore.searchBarIsVisible,
+			'py-5': !navbarStore.searchBarIsVisible,
+			'shadow-md': !navbarStore.searchBarIsVisible,
+		}"
 	>
 		<nav
 			class="flex justify-between items-center w-full text-white font-bold text-xl"
@@ -13,7 +19,9 @@
 				class="text-white"
 			/>
 			<span>RachaConnect</span>
-			<div class="flex justify-center items-center p-2 rounded-full bg-blue-400">
+			<div
+				class="flex justify-center items-center p-2 rounded-full bg-blue-400"
+			>
 				<Icon
 					name="mi:notification"
 					:size="25"
@@ -21,7 +29,10 @@
 				/>
 			</div>
 		</nav>
-		<div class="flex justify-between items-center mt-5 mb-3">
+		<div
+			class="flex justify-between items-center mt-5 mb-3"
+			v-if="navbarStore.searchBarIsVisible"
+		>
 			<div class="flex gap-2">
 				<Icon
 					name="ri:search-line"
@@ -47,23 +58,45 @@
 				Filtros
 			</div>
 		</div>
-        <div class="absolute -bottom-4 flex gap-2">
-            <div class="flex items-center gap-1 bg-orange-500 text-white text-md px-2 py-1 rounded-full">
-                <Icon name="la:basketball-ball" :size="20"/>
-                Basquete
-            </div>
-            <div class="flex items-center gap-1 bg-green-500 text-white text-md px-2 py-1 rounded-full">
-                <Icon name="mdi:soccer" :size="20"/>
-                Futsal
-            </div>
-            <div class="flex items-center gap-1 bg-blue-300 text-white text-md px-2 py-1 rounded-full">
-                <Icon name="la:infinity" :size="20"/>
-                Todos
-            </div>
-        </div>
+		<div
+			class="absolute -bottom-4 flex gap-2"
+			v-if="navbarStore.searchBarIsVisible"
+		>
+			<div
+				class="flex items-center gap-1 bg-orange-500 text-white text-md px-2 py-1 rounded-full"
+			>
+				<Icon
+					name="la:basketball-ball"
+					:size="20"
+				/>
+				Basquete
+			</div>
+			<div
+				class="flex items-center gap-1 bg-green-500 text-white text-md px-2 py-1 rounded-full"
+			>
+				<Icon
+					name="mdi:soccer"
+					:size="20"
+				/>
+				Futsal
+			</div>
+			<div
+				class="flex items-center gap-1 bg-blue-300 text-white text-md px-2 py-1 rounded-full"
+			>
+				<Icon
+					name="la:infinity"
+					:size="20"
+				/>
+				Todos
+			</div>
+		</div>
 	</header>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import {useNavBarStore} from '~/stores/navBar.store'
+
+const navbarStore = useNavBarStore()
+</script>
 
 <style scoped></style>
