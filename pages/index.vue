@@ -13,20 +13,33 @@
 			</button>
 		</div>
 		<div class="mt-5 flex flex-col gap-4 mb-4">
-			<AppCardEvent
+			<!-- <AppCardEvent
 				title="Basquete no Mariano"
-				hours="18:30 PM"
-                location="Ginásio de Esportes António sei lá das quantos, DM"
+				datetime="18:30 PM"
+				location="Ginásio de Esportes António sei lá das quantos, DM"
 			/>
 			<AppCardEvent
 				title="Basquete no Mariano"
-				hours="18:30 PM"
-                location="Ginásio de Esportes António sei lá das quantos, DM"
+				datetime="18:30 PM"
+				location="Ginásio de Esportes António sei lá das quantos, DM"
+			/> -->
+			<AppCardEvent
+				v-if="data"
+				v-for="event in data.events"
+				:key="event.id"
+				:title="event.name"
+				:datetime="event.datetime"
+				:location="event.location"
+				:participants="event.participants"
 			/>
 		</div>
+		<!-- {{ status }} -->
+		<!-- {{ data }} -->
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const {data} = await useFetch('/api/v1/events')
+</script>
 
 <style scoped></style>

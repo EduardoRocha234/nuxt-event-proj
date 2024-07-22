@@ -2,7 +2,7 @@
 	<header
 		ref="header"
 		id="header"
-		class="px-5 py-9 relative flex flex-col font-medium justify-between text-lg transition-all ease-in duration-300 bg-red-500 rounded-b-[3rem]"
+		class="px-5 py-9 relative flex flex-col font-medium justify-between text-lg transition-all ease-in duration-300 bg-blue-500 rounded-b-[3rem]"
 	>
 		<nav
 			class="flex justify-between items-center w-full text-white font-bold text-xl"
@@ -13,7 +13,7 @@
 				class="text-white"
 			/>
 			<span>RachaConnect</span>
-			<div class="flex justify-center items-center p-2 rounded-full bg-red-400">
+			<div class="flex justify-center items-center p-2 rounded-full bg-blue-400">
 				<Icon
 					name="mi:notification"
 					:size="25"
@@ -36,7 +36,7 @@
 				</div>
 			</div>
 			<div
-				class="flex items-center px-2 py-1 gap-1 text-sm bg-red-400 rounded-full text-white"
+				class="flex items-center px-2 py-1 gap-1 text-sm bg-blue-400 rounded-full text-white"
 			>
 				<div class="flex justify-center items-center p-1 border rounded-full">
 					<Icon
@@ -56,7 +56,7 @@
                 <Icon name="mdi:soccer" :size="20"/>
                 Futsal
             </div>
-            <div class="flex items-center gap-1 bg-blue-500 text-white text-md px-2 py-1 rounded-full">
+            <div class="flex items-center gap-1 bg-blue-300 text-white text-md px-2 py-1 rounded-full">
                 <Icon name="la:infinity" :size="20"/>
                 Todos
             </div>

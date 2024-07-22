@@ -46,7 +46,14 @@ export default defineNuxtConfig({
 		'@vueuse/nuxt',
 		'@nuxt/icon',
 		'@nuxt/eslint',
+		'dayjs-nuxt',
 	],
+	dayjs: {
+		locales: ['pt', 'br'],
+		plugins: ['relativeTime', 'utc', 'timezone'],
+		defaultLocale: 'pt',
+		defaultTimezone: 'America/Sao_Paulo',
+	},
 	pinia: {
 		storesDirs: ['./stores/**'],
 	},

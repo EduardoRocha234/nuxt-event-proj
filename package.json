@@ -26,6 +26,7 @@
     "@nuxt/icon": "^1.2.0",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@types/lodash-es": "^4.17.12",
+    "dayjs-nuxt": "^2.1.9",
     "eslint": "^9.7.0"
   }
 }

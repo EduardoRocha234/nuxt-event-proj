@@ -1,50 +1,97 @@
 <template>
 	<div
-		class="w-full flex flex-col gap-1 h-[16.5rem] shadow-lg rounded-2xl px-4 py-4 border-t"
+		class="w-full flex flex-col gap-1 h-[22.5rem] shadow-lg rounded-2xl px-4 py-4 border-t"
 	>
 		<div class="relative">
-			<div
+			<!-- <div
 				class="absolute flex flex-col items-center gap-0 top-2 left-2 px-3 py-1 rounded-lg bg-white"
 			>
-				<span class="text-lg font-bold text-red-400">10</span
-				><span class="-mt-2 font-semibold text-red-400">JUL</span>
-			</div>
+				<span class="text-lg font-bold text-blue-400">10</span
+				><span class="-mt-2 font-semibold text-blue-400">JUL</span>
+			</div> -->
 			<img
 				src="https://portalvidalivre.com/uploads/content/image/100624/Design_sem_nome_-_2022-01-31T233027.903__1_.jpg"
 				class="w-full object-cover h-36 rounded-xl"
 			/>
 		</div>
+		<div
+			class="flex justify-between items-center px-2 py-1 bg-blue-50 rounded-md mt-2"
+		>
+			<div class="flex items-center gap-2 text-blue-600">
+				<Icon
+					name="mdi:calendar"
+					:size="22"
+				/>
+				<!-- <span class="font-semibold"> 10 JUL 2024 </span> -->
+				<span class="font-semibold uppercase"> {{ dateFormat }} </span>
+			</div>
+			<span class="text-blue-600 font-semibold">{{ hoursFormat }}</span>
+		</div>
 		<div class="flex justify-between mt-1">
 			<span class="font-bold text-lg">
 				{{ title }}
 			</span>
-			<span class="text-red-400">{{ hours }}</span>
 		</div>
 		<div class="text-xs text-slate-500">
-			Fulano, Sicrano, Silva... + 11 pessoas confirmadas
+			<template v-if="participantsFormat.length > 3">
+				{{ participantsFormat.slice(0, 3) }}... +
+				{{ participantsFormat.length - 3 }} pessoas confirmadas
+			</template>
+			<template
+				v-else-if="
+					participantsFormat.length > 0 && participantsFormat.length <= 3
+				"
+			>
+				{{ participantsFormat.length }} irão participar
+			</template>
+			<template v-else-if="participantsFormat.length === 0">
+				0 pessoas confirmadas
+			</template>
 		</div>
-		<div class="flex items-center -ml-1 w-8/12">
+		<div class="flex items-center -ml-1 w-full">
 			<Icon
 				name="mdi:location"
 				class="text-slate-400"
 				:size="35"
 			/>
-			<span class="text-slate-500 text-sm truncate font-semibold" :title="location">
+			<span
+				class="text-slate-500 text-sm truncate font-semibold"
+				:title="location"
+			>
 				{{ location }}
 			</span>
 		</div>
+		<button
+			class="w-full py-2 px-4 bg-blue-600 rounded-xl hover:bg-blue-600 text-white transition-all ease-out duration-100 focus:outline-none"
+		>
+			Ver Detalhes
+		</button>
 	</div>
 </template>
 
 <script setup lang="ts">
+import type {IParticipant} from '~/interfaces'
+
 const props = withDefaults(
 	defineProps<{
 		title: string
-		hours: string
+		datetime: string
 		location: string
+		participants?: IParticipant[]
 	}>(),
-	{}
+	{participants: undefined}
 )
+
+const dayjs = useDayjs()
+
+const dateFormat = computed(() => dayjs(props.datetime).format('DD MMM YYYY'))
+const hoursFormat = computed(() => dayjs(props.datetime).format('HH:mm A'))
+
+const participantsFormat = computed(() => {
+	if (!props.participants) return []
+
+	return props.participants.map((participant) => participant.id).join(', ')
+})
 </script>
 
 <style scoped></style>

@@ -22,7 +22,7 @@
 			</div>
 			<button
 				@click="handleSubmit"
-				class="w-full py-2 px-4 bg-red-500 rounded-xl hover:bg-red-600 text-white mt-3 transition-all ease-out duration-100 focus:border focus:border-red-700 focus:outline-none"
+				class="w-full py-2 px-4 bg-blue-500 rounded-xl hover:bg-blue-600 text-white mt-3 transition-all ease-out duration-100 focus:border focus:border-blue-700 focus:outline-none"
 			>
 				Entrar
 			</button>
@@ -53,7 +53,7 @@
 
 		<div class="absolute -bottom-48 right-50">
 			<span class="font-semibold">Ainda não tem conta? </span>
-			<span class="font-semibold text-red-500 hover:underline cursor-pointer"
+			<span class="font-semibold text-blue-500 hover:underline cursor-pointer"
 				>Cadastre-se</span
 			>
 		</div>

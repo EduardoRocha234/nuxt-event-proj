@@ -1,7 +1,10 @@
 <template>
 	<div>
 		<AppNavBar />
-		<slot />
+		<div class="mb-14">
+			<slot />
+		</div>
+		<AppFooterBar />
 	</div>
 </template>
 
