@@ -16,8 +16,6 @@ export default defineEventHandler(async (event) => {
 			headers: {Authorization: `Bearer ${token}`},
 		})
 
-		console.log(res)
-
 		if (res.status !== 200) {
 			throw createError({
 				status: res.status,

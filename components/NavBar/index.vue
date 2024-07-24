@@ -6,7 +6,7 @@
 		:class="{
 			'rounded-b-[3rem]': navbarStore.searchBarIsVisible,
 			'py-9': navbarStore.searchBarIsVisible,
-			'py-5': !navbarStore.searchBarIsVisible,
+			'py-4': !navbarStore.searchBarIsVisible,
 			'shadow-md': !navbarStore.searchBarIsVisible,
 		}"
 	>

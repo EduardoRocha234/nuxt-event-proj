@@ -6,6 +6,7 @@
 		}"
 	>
 		<input
+			:id="id"
 			ref="inputRef"
 			v-model="value"
 			:type="type"

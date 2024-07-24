@@ -23,14 +23,17 @@
 </template>
 
 <script setup lang="ts">
+import {useFooterBarStore} from '~/stores/footerBar.store'
 import {useNavBarStore} from '~/stores/navBar.store'
 
 const {data} = await useFetch('/api/v1/events')
 
 const navbarStore = useNavBarStore()
+const footerStore = useFooterBarStore()
 
 onMounted(() => {
 	navbarStore.setSearchBarIsVisible(true)
+	footerStore.setFooterBarVisible(true)
 })
 </script>
 

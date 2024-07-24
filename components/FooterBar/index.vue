@@ -1,5 +1,8 @@
 <template>
-	<footer class="fixed bottom-0 h-16 bg-slate-50 w-full z-40">
+	<footer
+		class="fixed bottom-0 h-16 bg-slate-50 w-full z-40 border-t"
+		v-if="footerBarStore.footerBarVisible"
+	>
 		<div class="relative flex justify-between px-10 w-full h-full">
 			<div class="flex flex-col items-center justify-center text-blue-600">
 				<Icon
@@ -30,6 +33,10 @@
 	</footer>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import {useFooterBarStore} from '~/stores/footerBar.store'
+
+const footerBarStore = useFooterBarStore()
+</script>
 
 <style scoped></style>
