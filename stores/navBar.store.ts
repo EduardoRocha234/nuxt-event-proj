@@ -19,4 +19,5 @@ export const useNavBarStore = defineStore('navBarStore', {
 			this.searchBarIsVisible = visible
 		},
 	},
+	persist: true,
 })

@@ -43,6 +43,7 @@ export default defineNuxtConfig({
 	modules: [
 		'@nuxtjs/tailwindcss',
 		'@pinia/nuxt',
+		'@pinia-plugin-persistedstate/nuxt',
 		'@vueuse/nuxt',
 		'@nuxt/icon',
 		'@nuxt/eslint',
@@ -64,4 +65,5 @@ export default defineNuxtConfig({
 	vueuse: {
 		autoImports: true,
 	},
+	css: ['~/assets/css/globals.css'],
 })

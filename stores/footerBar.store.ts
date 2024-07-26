@@ -12,4 +12,5 @@ export const useFooterBarStore = defineStore('footerBarStore', {
 			this.isFooterBarVisible = visible
 		},
 	},
+	persist: true,
 })
