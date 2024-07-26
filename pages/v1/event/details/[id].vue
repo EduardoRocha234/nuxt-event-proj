@@ -158,7 +158,7 @@ import {useFooterBarStore} from '~/stores/footerBar.store'
 import {useNavBarStore} from '~/stores/navBar.store'
 import {useUserStore} from '~/stores/user.store'
 
-const {$api, $toast} = useNuxtApp()
+const {$api, $toast, $socket} = useNuxtApp()
 
 const navbarStore = useNavBarStore()
 const footerbarStore = useFooterBarStore()
@@ -205,6 +205,14 @@ const exitEvent = async () => {
 		$toast.error('Ocorreu um erro ao se remover da lista.')
 	}
 }
+
+$socket.on('insertParticipant', async () => {
+	await refresh()
+})
+
+$socket.on('removeParticipant', async () => {
+	await refresh()
+})
 
 onMounted(() => {
 	navbarStore.setSearchBarIsVisible(false)
