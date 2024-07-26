@@ -61,9 +61,11 @@
 </template>
 
 <script setup lang="ts">
-import type {IUserCrendetials} from '~/interfaces'
+import type {IUser, IUserCrendetials} from '~/interfaces'
+import {useUserStore} from '~/stores/user.store'
 
 const {$api} = useNuxtApp()
+const userStore = useUserStore()
 
 definePageMeta({
 	layout: 'auth',
@@ -81,6 +83,12 @@ const handleSubmit = async () => {
 	})
 
 	if (req.status === 200) {
+		if (req?._data?.token) {
+			const payloadJwt = extractPayloadJwt<IUser>(req?._data?.token)
+			console.log(payloadJwt)
+			userStore.setUser(payloadJwt.account)
+		}
+
 		await navigateTo('/', {
 			replace: true,
 		})

@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 
 		setCookie(event, 'token', token)
 
-		return new Response(null, {status: 200})
+		return {token} as {token: string}
 	} catch (err) {
 		throw createError({
 			status: 500,
