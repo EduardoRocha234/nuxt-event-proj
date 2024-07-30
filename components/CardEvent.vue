@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import type {IEvent, IParticipant} from '~/interfaces'
+import type {IEvent} from '~/interfaces'
 
 const {event} = defineProps<{
 	event: IEvent
@@ -82,7 +82,12 @@ const {event} = defineProps<{
 const dayjs = useDayjs()
 
 const dateFormat = computed(() => dayjs(event.datetime).format('DD MMM YYYY'))
-const hoursFormat = computed(() => dayjs(event.datetime).format('HH:mm A'))
+const hoursFormat = computed(
+	() =>
+		`${dayjs(event.startTime).format('HH:mm A')} - ${dayjs(
+			event.endTime
+		).format('HH:mm A')}`
+)
 
 const participantsFormat = computed(() => {
 	if (!event.participants) return ''

@@ -13,5 +13,5 @@ export interface IParticipant {
 	user?: IUser
 	status: ParticipantStatus
 	participantName: string
-	createdAt: string
+	createdAt: Date
 }
