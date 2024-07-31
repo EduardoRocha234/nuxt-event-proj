@@ -13,14 +13,14 @@ export default defineEventHandler(async (event) => {
 		})
 
 		if (req.status !== 200 && req.status !== 401) {
-			return createError({
+			throw createError({
 				status: req.status,
 				message: 'Erro ao autenticar',
 			})
 		}
 
 		if (req.status === 401) {
-			return createError({
+			throw createError({
 				statusCode: 401,
 				message: 'Credenciais Inválidas',
 			})

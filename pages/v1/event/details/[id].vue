@@ -68,6 +68,8 @@
 </template>
 
 <script setup lang="ts">
+import type {IEvent} from '~/interfaces'
+
 const {$api, $toast, $socket} = useNuxtApp()
 const {user} = useUserStore()
 
@@ -80,7 +82,7 @@ const userIsInParticipantsList = computed(
 	() => !!data?.value?.participants.some((p) => p.userId === user?.userId)
 )
 
-const {data, refresh} = await useFetch(`/api/v1/events/${eventId}`)
+const {data, refresh} = await useFetch<IEvent>(`/api/v1/events/${eventId}`)
 
 const joinInEvent = async () => {
 	const req = await $api.raw(`/api/v1/events/${eventId}/join/${user?.userId}`, {

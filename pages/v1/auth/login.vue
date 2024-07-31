@@ -26,7 +26,12 @@
 			</div>
 			<button
 				@click="handleSubmit"
-				class="w-full py-2 px-4 bg-blue-500 rounded-xl hover:bg-blue-600 text-white mt-3 transition-all ease-out duration-100 focus:border focus:border-blue-700 focus:outline-none"
+				:disabled="loading"
+				class="w-full py-2 px-4 rounded-xl text-white mt-3 transition-all ease-out duration-100 focus:border focus:border-blue-700 focus:outline-none"
+				:class="{
+					'bg-blue-500': !loading,
+					'bg-blue-400': loading,
+				}"
 			>
 				Entrar
 			</button>
@@ -76,6 +81,7 @@ definePageMeta({
 	layout: 'auth',
 })
 
+const loading = ref<boolean>(false)
 const credentials = reactive<IUserCrendetials>({
 	email: '',
 	password: '',
@@ -107,15 +113,16 @@ const handleSubmit = async () => {
 
 	if (!isValid) return
 
+	loading.value = true
 	const req = await $api.raw('/api/v1/auth/login', {
 		method: 'POST',
 		body: credentials,
 	})
+	loading.value = false
 
 	if (req.status === 200) {
 		if (req?._data?.token) {
 			const payloadJwt = extractPayloadJwt<IUser>(req?._data?.token)
-			console.log(payloadJwt)
 			userStore.setUser(payloadJwt.account)
 		}
 
