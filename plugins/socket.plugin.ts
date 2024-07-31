@@ -1,13 +1,12 @@
 import {io} from 'socket.io-client'
 
 export default defineNuxtPlugin((nuxtApp) => {
-	const config = useRuntimeConfig()
+	const {API_BASE_URL} = useRuntimeConfig().public
 
-	// console.log(config.app.)
-	const socket = io('http://10.0.0.127:8000')
+	const socket = io(API_BASE_URL)
 
 	socket.on('connection', (data) => {
-		console.log('Evento', data)
+		console.log('Connection', data)
 	})
 
 	return {

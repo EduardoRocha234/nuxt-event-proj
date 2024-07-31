@@ -1,7 +1,7 @@
 import {IUserCrendetials} from '~/interfaces'
 
 export default defineEventHandler(async (event) => {
-	const {API_BASE_URL} = useRuntimeConfig(event)
+	const {API_BASE_URL} = useRuntimeConfig(event).public
 
 	const body = await readBody<IUserCrendetials>(event)
 
@@ -12,17 +12,17 @@ export default defineEventHandler(async (event) => {
 			body: JSON.stringify(body),
 		})
 
-		if (req.status === 401) {
-			throw createError({
-				statusCode: 401,
-				message: 'Credenciais Inválidas',
+		if (req.status !== 200 && req.status !== 401) {
+			return createError({
+				status: req.status,
+				message: 'Erro ao autenticar',
 			})
 		}
 
-		if (req.status !== 200) {
-			throw createError({
-				status: req.status,
-				message: 'Erro ao autenticar',
+		if (req.status === 401) {
+			return createError({
+				statusCode: 401,
+				message: 'Credenciais Inválidas',
 			})
 		}
 

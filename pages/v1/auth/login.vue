@@ -10,6 +10,7 @@
 					v-model="credentials.email"
 					placeholder="Seu Email"
 					name="email"
+					:errors="getError('email')"
 				/>
 			</div>
 			<div>
@@ -18,6 +19,9 @@
 					v-model="credentials.password"
 					placeholder="Sua Senha"
 					name="password"
+					type="password"
+					is-password-input
+					:errors="getError('password')"
 				/>
 			</div>
 			<button
@@ -63,8 +67,9 @@
 <script setup lang="ts">
 import type {IUser, IUserCrendetials} from '~/interfaces'
 import {useUserStore} from '~/stores/user.store'
+import * as zod from 'zod'
 
-const {$api} = useNuxtApp()
+const {$api, $toast} = useNuxtApp()
 const userStore = useUserStore()
 
 definePageMeta({
@@ -76,7 +81,32 @@ const credentials = reactive<IUserCrendetials>({
 	password: '',
 })
 
+const schema = zod.object({
+	email: zod
+		.string({
+			required_error: 'Email é obrigatório',
+		})
+		.min(1, {message: 'Email é obrigatório'})
+		.email({
+			message: 'Digite um email válido',
+		}),
+	password: zod
+		.string({
+			required_error: 'Senha é obrigatório',
+		})
+		.min(1, {message: 'Senha é obrigatório'}),
+})
+
+const {validate, isValid, getError, errors} = useValidationForm(
+	schema,
+	credentials
+)
+
 const handleSubmit = async () => {
+	await validate()
+
+	if (!isValid) return
+
 	const req = await $api.raw('/api/v1/auth/login', {
 		method: 'POST',
 		body: credentials,
@@ -92,7 +122,15 @@ const handleSubmit = async () => {
 		await navigateTo('/', {
 			replace: true,
 		})
+		return
 	}
+
+	if (req.status === 401) {
+		$toast.error('Credenciais inválidas')
+		return
+	}
+
+	$toast.error('Ocorreu um erro ao tentar fazer o login')
 }
 </script>
 

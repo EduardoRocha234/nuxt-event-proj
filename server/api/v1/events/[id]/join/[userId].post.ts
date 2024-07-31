@@ -1,7 +1,7 @@
 import {IEvent} from '~/interfaces'
 
 export default defineEventHandler(async (event) => {
-	const {API_BASE_URL} = useRuntimeConfig(event)
+	const {API_BASE_URL} = useRuntimeConfig(event).public
 	const token = getCookie(event, 'token')
 	const id = getRouterParam(event, 'id')
 	const userId = getRouterParam(event, 'userId')
