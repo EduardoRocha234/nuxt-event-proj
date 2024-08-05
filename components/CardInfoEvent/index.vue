@@ -18,7 +18,7 @@
 			<div class="flex flex-col">
 				<span class="font-semibold uppercase">{{ dateFormat }} </span>
 				<span class="text-xs text-slate-600"
-					>{{ nameWeekDayFormat }}, {{startAndEndTimeFormat}}</span
+					>{{ nameWeekDayFormat }}, {{ startAndEndTimeFormat }}</span
 				>
 			</div>
 		</div>
@@ -49,40 +49,58 @@
 					{{ event?.participants.length }}/{{ event?.maxParticipants }}
 				</div>
 			</div>
-			<ol
-				class="relative mt-2 w-full bg-slate-100 border-t-4 border-slate-300 rounded-xl h-72 overflow-y-auto px-6 py-4"
-			>
-				<li
-					v-for="(participant, index) in event?.participants"
-					:class="{
-						'font-bold text-blue-600': participant.userId === user?.userId,
-						'font-semibold text-slate-600': participant.userId !== user?.userId,
-					}"
-					class="flex justify-between w-full items-center gap-2 text-md mb-2"
-				>
-					<span>{{ index + 1 }} - {{ participant.participantName }}</span>
-					<div
-						class="p-1 text-xs rounded-xl"
+			<div class="mt-2 relative h-80 rounded-xl px-5 pt-4 pb-9 bg-slate-100">
+				<ol class="w-full h-full overflow-scroll px-2">
+					<li
+						v-for="(participant, index) in event?.participants"
 						:class="{
-							'bg-green-300 text-green-800': participant.status === 'confirmed',
-							'bg-orange-300 text-orange-800':
-								participant.status === 'waiting_list',
+							'font-bold text-blue-600': participant.userId === user?.userId,
+							'font-semibold text-slate-600':
+								participant.userId !== user?.userId,
 						}"
+						class="flex justify-between w-full items-center gap-2 text-md mb-2"
 					>
-						{{ participant.status === 'confirmed' ? 'Confirmado' : 'Suplente' }}
-					</div>
-				</li>
+						<span>{{ index + 1 }} - {{ participant.participantName }}</span>
+						<div
+							class="p-1 w-20 flex justify-center items-center text-xs rounded-xl"
+							:class="{
+								'bg-green-300 text-green-800':
+									participant.status === 'confirmed',
+								'bg-orange-300 text-orange-800':
+									participant.status === 'waiting_list',
+							}"
+						>
+							{{
+								participant.status === 'confirmed' ? 'Confirmado' : 'Suplente'
+							}}
+						</div>
+					</li>
+				</ol>
+				<!-- v-if="event.adminId === user?.userId" -->
 				<div
-					class="absolute bottom-0 right-1 flex items-center justify-center p-2 cursor-pointer"
+					class="absolute bottom-0 right-0 px-4 py-2 mt-3 w-full flex items-center justify-between"
 					title="Formar times"
 				>
+					<div class="flex gap-2">
+						<div
+							class="px-2 py-1 w-full h-full bg-green-300 rounded-full text-xs"
+						>
+							{{ participantsConfirmed.length }}
+						</div>
+						<div
+							class="px-2 py-1 w-full h-full bg-orange-300 rounded-full text-xs"
+							v-if="participantsWaitingList.length"
+						>
+							{{ participantsWaitingList.length }}
+						</div>
+					</div>
 					<Icon
 						name="fa6-solid:people-group"
 						:size="20"
 						class="text-slate-500"
 					/>
 				</div>
-			</ol>
+			</div>
 		</div>
 	</div>
 </template>
@@ -90,13 +108,17 @@
 <script setup lang="ts">
 import type {IEvent} from '~/interfaces'
 
-const {event} = defineProps<{imageSrc: string; event: IEvent}>()
+const props = defineProps<{imageSrc: string; event: IEvent}>()
+
+const {event} = toRefs(props)
 
 const {user} = useUserStore()
 
 const dayjs = useDayjs()
 
-const dateFormat = computed(() => dayjs(event.datetime).format('DD MMMM, YYYY'))
+const dateFormat = computed(() =>
+	dayjs(event.value.datetime).format('DD MMMM, YYYY')
+)
 const nameWeekDayFormat = computed(() => {
 	const weekDays = {
 		0: 'Domingo',
@@ -108,15 +130,21 @@ const nameWeekDayFormat = computed(() => {
 		6: 'Sábado',
 	}
 
-	const day = dayjs(event.datetime).day()
+	const day = dayjs(event.value.datetime).day()
 
 	return weekDays[day]
 })
 const startAndEndTimeFormat = computed(
 	() =>
-		`${dayjs(event.startTime).format('HH:mm A')} ás ${dayjs(
-			event.endTime
+		`${dayjs(event.value.startTime).format('HH:mm A')} ás ${dayjs(
+			event.value.endTime
 		).format('HH:mm A')}`
+)
+const participantsConfirmed = computed(() =>
+	event.value.participants.filter((p) => p.status === 'confirmed')
+)
+const participantsWaitingList = computed(() =>
+	event.value.participants.filter((p) => p.status === 'waiting_list')
 )
 </script>
 

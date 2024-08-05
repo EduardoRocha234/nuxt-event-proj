@@ -10,5 +10,7 @@ export interface IEvent {
     datetime: Date
     startTime: Date
     endTime: Date
+    maxOfParticipantsWaitingList: number
+    adminId: string
     participants: IParticipant[]
   }

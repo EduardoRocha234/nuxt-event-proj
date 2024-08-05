@@ -41,15 +41,16 @@
 			</template>
 		</AppHeadPage>
 		<AppCardInfoEvent
-			v-if="data"
+			v-if="event"
 			image-src="https://portalvidalivre.com/uploads/content/image/100624/Design_sem_nome_-_2022-01-31T233027.903__1_.jpg"
-			:event="data"
+			:event="event"
 		/>
 	</div>
 	<AppFooterBarEmpty>
 		<AppButton
-			@on-click="joinInEvent"
 			v-if="!userIsInParticipantsList"
+			@on-click="joinInEvent"
+			:disabled="event?.participants.length === event?.maxParticipants"
 		>
 			<Icon
 				name="mdi:plus"
@@ -79,10 +80,12 @@ const route = useRoute()
 const eventId = route.params.id
 
 const userIsInParticipantsList = computed(
-	() => !!data?.value?.participants.some((p) => p.userId === user?.userId)
+	() => !!event?.value?.participants.some((p) => p.userId === user?.userId)
 )
 
-const {data, refresh} = await useFetch<IEvent>(`/api/v1/events/${eventId}`)
+const {data: event, refresh} = await useFetch<IEvent>(
+	`/api/v1/events/${eventId}`
+)
 
 const joinInEvent = async () => {
 	const req = await $api.raw(`/api/v1/events/${eventId}/join/${user?.userId}`, {

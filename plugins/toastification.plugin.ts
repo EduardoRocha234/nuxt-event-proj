@@ -3,7 +3,7 @@ import 'vue-toastification/dist/index.css'
 
 export default defineNuxtPlugin((nuxtApp) => {
 	const options: vt.PluginOptions = {
-		timeout: 5000,
+		timeout: 4500,
 		position: vt.POSITION.TOP_RIGHT,
 		transition: 'Vue-Toastification__fade',
         draggable: true,
