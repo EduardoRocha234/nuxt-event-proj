@@ -7,6 +7,7 @@
 			/>
 		</div>
 		<span class="text-3xl font-semibold mt-2 w-full"> {{ event.name }}</span>
+		<!-- componentizar -->
 		<div class="flex mt-4 gap-2 bg-slate-100 rounded-xl px-2 py-2">
 			<div class="flex items-center justify-center bg-blue-100 p-2 rounded-2xl">
 				<Icon
@@ -98,11 +99,13 @@
 						name="fa6-solid:people-group"
 						:size="20"
 						class="text-slate-500"
+						@click.stop="openModal"
 					/>
 				</div>
 			</div>
 		</div>
 	</div>
+	<AppModal v-model:visible="modal" header="Montar times" height="h-4/6" />
 </template>
 
 <script setup lang="ts">
@@ -113,6 +116,12 @@ const props = defineProps<{imageSrc: string; event: IEvent}>()
 const {event} = toRefs(props)
 
 const {user} = useUserStore()
+
+const modal = ref<boolean>(false)
+
+const openModal = () => {
+	modal.value = true
+}
 
 const dayjs = useDayjs()
 
