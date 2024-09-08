@@ -1,5 +1,5 @@
 <template>
-	<div class="w-full h-full px-4 relative mb-20">
+	<AppSectionCard>
 		<AppHeadPage>
 			<template #content-right>
 				<AppButtonDropdownV1>
@@ -40,12 +40,12 @@
 				</AppButtonDropdownV1>
 			</template>
 		</AppHeadPage>
-		<AppCardInfoEvent
+		<PartialEventDetails
 			v-if="event"
 			image-src="https://portalvidalivre.com/uploads/content/image/100624/Design_sem_nome_-_2022-01-31T233027.903__1_.jpg"
 			:event="event"
 		/>
-	</div>
+	</AppSectionCard>
 	<AppFooterBarEmpty>
 		<AppButton
 			v-if="!userIsInParticipantsList"

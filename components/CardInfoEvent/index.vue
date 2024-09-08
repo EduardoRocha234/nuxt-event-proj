@@ -105,7 +105,11 @@
 			</div>
 		</div>
 	</div>
-	<AppModal v-model:visible="modal" header="Montar times" height="h-4/6" />
+	<AppModal
+		v-model:visible="modal"
+		header="Montar times"
+		height="h-4/6"
+	/>
 </template>
 
 <script setup lang="ts">

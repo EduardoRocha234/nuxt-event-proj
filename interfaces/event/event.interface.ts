@@ -5,11 +5,11 @@ export interface IEvent {
     name: string
     sportId: number
     maxParticipants: number
-    createdAt: Date
+    createdAt: string
     location: string
-    datetime: Date
-    startTime: Date
-    endTime: Date
+    datetime: string
+    startTime: string
+    endTime: string
     maxOfParticipantsWaitingList: number
     adminId: string
     participants: IParticipant[]

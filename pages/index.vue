@@ -23,10 +23,11 @@
 </template>
 
 <script setup lang="ts">
+import type {IEvent} from '~/interfaces'
 import {useFooterBarStore} from '~/stores/footerBar.store'
 import {useNavBarStore} from '~/stores/navBar.store'
 
-const {data} = await useFetch('/api/v1/events')
+const {data} = await useFetch<{events: IEvent[]}>('/api/v1/events')
 
 const navbarStore = useNavBarStore()
 const footerStore = useFooterBarStore()
