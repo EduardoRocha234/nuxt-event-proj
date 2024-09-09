@@ -13,6 +13,7 @@
 		<ol class="w-full h-full overflow-scroll px-2">
 			<li
 				v-for="(participant, index) in parcipantsList"
+				:key="index"
 				:class="{
 					'font-bold text-blue-600': participant.userId === user?.userId,
 					'font-semibold text-slate-600': participant.userId !== user?.userId,
@@ -61,10 +62,12 @@
 <script setup lang="ts">
 import type {IParticipant} from '~/interfaces'
 
-const {parcipantsList, maxParticipants} = defineProps<{
+const props = defineProps<{
 	parcipantsList: IParticipant[]
 	maxParticipants: number
 }>()
+
+const {parcipantsList, maxParticipants} = toRefs(props)
 
 const emits = defineEmits<{
 	(event: 'openModal'): void
@@ -73,10 +76,10 @@ const emits = defineEmits<{
 const {user} = useUserStore()
 
 const participantsConfirmed = computed(() =>
-	parcipantsList.filter((p) => p.status === 'confirmed')
+	parcipantsList.value.filter((p) => p.status === 'confirmed')
 )
 const participantsWaitingList = computed(() =>
-	parcipantsList.filter((p) => p.status === 'waiting_list')
+	parcipantsList.value.filter((p) => p.status === 'waiting_list')
 )
 </script>
 

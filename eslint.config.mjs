@@ -8,6 +8,7 @@ export default withNuxt(
             'no-useless-escape': 'off',
             'import/order': 'off',
             'vue/no-v-html': 'off',
+            'vue/no-multiple-template-root': 'off',
         },
         plugins: [],
     }

@@ -49,8 +49,8 @@
 	<AppFooterBarEmpty>
 		<AppButton
 			v-if="!userIsInParticipantsList"
-			@on-click="joinInEvent"
 			:disabled="event?.participants.length === event?.maxParticipants"
+			@on-click="joinInEvent"
 		>
 			<Icon
 				name="mdi:plus"
@@ -59,9 +59,9 @@
 			Entrar na Lista
 		</AppButton>
 		<AppButton
-			@on-click="exitEvent"
-			variant="orange"
 			v-else
+			variant="orange"
+			@on-click="exitEvent"
 		>
 			Sair da Lista
 		</AppButton>

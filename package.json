@@ -13,10 +13,12 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
+    "@primevue/themes": "^4.0.5",
     "@vueuse/core": "^10.11.0",
     "@vueuse/nuxt": "^10.11.0",
     "lodash-es": "^4.17.21",
     "nuxt": "^3.12.4",
+    "primevue": "^4.0.5",
     "socket.io-client": "^4.7.5",
     "vue": "latest",
     "vue-toastification": "^2.0.0-rc.5",
@@ -28,6 +30,7 @@
     "@nuxt/icon": "^1.2.0",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
+    "@primevue/nuxt-module": "^4.0.5",
     "@types/lodash-es": "^4.17.12",
     "dayjs-nuxt": "^2.1.9",
     "eslint": "^9.7.0"
