@@ -11,9 +11,11 @@
 				/>
 			</button>
 		</div>
-		<div class="mt-5 flex flex-col gap-4 mb-4">
+		<div
+			v-if="data"
+			class="mt-5 flex flex-col gap-4 mb-4"
+		>
 			<AppCardEvent
-				v-if="data"
 				v-for="event in data.events"
 				:key="event.id"
 				:event="event"

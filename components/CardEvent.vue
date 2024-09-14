@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/html-self-closing -->
 <template>
 	<div
 		class="w-full flex flex-col gap-1 min-h-[22.5rem] shadow-lg rounded-2xl px-4 py-4 border-t"
@@ -64,8 +65,8 @@
 			</span>
 		</div>
 		<button
-			@click="navigateTo(`/v1/event/details/${event.id}`)"
 			class="w-full py-2 px-4 bg-blue-600 rounded-xl hover:bg-blue-700 text-white transition-all ease-out duration-100 focus:outline-none"
+			@click="navigateTo(`/v1/event/details/${event.id}`)"
 		>
 			Ver Detalhes
 		</button>
