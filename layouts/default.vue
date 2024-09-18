@@ -1,10 +1,14 @@
 <template>
 	<div>
 		<AppNavBar />
-		<div class="mb-14">
+		<!-- <AppBreadCrumb /> -->
+		<div class="mb-20">
 			<slot />
 		</div>
 		<AppFooterBar />
+		<AppFooterBarEmpty>
+			<div id="test"></div>
+		</AppFooterBarEmpty>
 	</div>
 </template>
 

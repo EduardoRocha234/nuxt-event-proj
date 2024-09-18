@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
-	<div class="flex flex-col h-full rounded-lg p-4 mt-5 shadow-xl">
+	<div class="flex flex-col h-full">
 		<div class="w-full">
 			<img
 				class="rounded-lg h-48 w-full object-cover"
@@ -11,18 +11,18 @@
 			{{ event.name }}</span
 		>
 		<AppDateHourBar
-			:datetime="event.datetime"
-			:start-time="event.startTime"
-			:end-time="event.endTime"
+			:datetime="event.datetime!"
+			:start-time="event.startTime!"
+			:end-time="event.endTime!"
 		/>
 		<AppLocalizationBar
-			:location="event.location"
+			:location="event.location!"
 			class="mt-2"
 		/>
 		<div class="mt-5">
 			<AppEventParticipantList
-				:parcipants-list="event.participants"
-				:max-participants="event.maxParticipants"
+				:parcipants-list="event.participants!"
+				:max-participants="event.maxParticipants!"
 				@open-modal="openModal"
 			/>
 		</div>

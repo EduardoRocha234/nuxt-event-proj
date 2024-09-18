@@ -49,7 +49,7 @@
 	<AppFooterBarEmpty>
 		<AppButton
 			v-if="!userIsInParticipantsList"
-			:disabled="event?.participants.length === event?.maxParticipants"
+			:disabled="event?.participants?.length === event?.maxParticipants"
 			@on-click="joinInEvent"
 		>
 			<Icon
@@ -80,7 +80,7 @@ const route = useRoute()
 const eventId = route.params.id
 
 const userIsInParticipantsList = computed(
-	() => !!event?.value?.participants.some((p) => p.userId === user?.userId)
+	() => !!event?.value?.participants?.some((p) => p.userId === user?.userId)
 )
 
 const {data: event, refresh} = await useFetch<IEvent>(
