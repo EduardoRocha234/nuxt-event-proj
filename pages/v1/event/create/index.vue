@@ -3,7 +3,6 @@
 		<AppHeadPage />
 		<LazyPartialEventForm />
 	</AppSectionCard>
-	
 </template>
 
 <script setup lang="ts">

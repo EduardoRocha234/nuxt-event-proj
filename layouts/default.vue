@@ -7,7 +7,7 @@
 		</div>
 		<AppFooterBar />
 		<AppFooterBarEmpty>
-			<div id="test"></div>
+			<div id="footer-content"></div>
 		</AppFooterBarEmpty>
 	</div>
 </template>

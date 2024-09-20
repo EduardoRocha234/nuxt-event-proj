@@ -10,8 +10,15 @@
 			<InputText
 				v-model="form.name"
 				input-id="name"
+				:invalid="!!getError('name')"
 				fluid
 			/>
+			<span
+				v-if="!!getError('name')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('name') }}
+			</span>
 		</div>
 		<div class="flex-auto mb-4">
 			<label
@@ -24,7 +31,14 @@
 				v-model="form.location"
 				input-id="location"
 				fluid
+				:invalid="!!getError('location')"
 			/>
+			<span
+				v-if="!!getError('location')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('location') }}
+			</span>
 		</div>
 		<div class="flex-auto mb-4">
 			<label
@@ -40,8 +54,15 @@
 				option-value="id"
 				placeholder="Selecione"
 				:loading="status === 'pending'"
+				:invalid="!!getError('sportId')"
 				fluid
 			/>
+			<span
+				v-if="!!getError('sportId')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('sportId') }}
+			</span>
 		</div>
 		<div class="flex-auto mb-4">
 			<label
@@ -54,9 +75,17 @@
 				v-model="form.maxParticipants"
 				input-id="maxParticipants"
 				show-buttons
+				:min="0"
 				:use-grouping="false"
+				:invalid="!!getError('maxParticipants')"
 				fluid
 			/>
+			<span
+				v-if="!!getError('maxParticipants')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('maxParticipants') }}
+			</span>
 		</div>
 		<div class="flex-auto mb-4">
 			<label
@@ -69,9 +98,17 @@
 				v-model="form.maxOfParticipantsWaitingList"
 				input-id="maxOfParticipantsWaitingList"
 				show-buttons
+				:min="0"
 				:use-grouping="false"
+				:invalid="!!getError('maxOfParticipantsWaitingList')"
 				fluid
 			/>
+			<span
+				v-if="!!getError('maxOfParticipantsWaitingList')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('maxOfParticipantsWaitingList') }}
+			</span>
 		</div>
 		<div class="mb-4">
 			<label
@@ -82,11 +119,19 @@
 			</label>
 			<DatePicker
 				v-model="form.datetime"
+				:min-date="new Date()"
 				input-id="datetime"
 				show-icon
 				fluid
 				icon-display="input"
+				:invalid="!!getError('datetime')"
 			/>
+			<span
+				v-if="!!getError('datetime')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('datetime') }}
+			</span>
 		</div>
 		<div class="mb-4">
 			<label
@@ -100,7 +145,14 @@
 				id="startTime"
 				time-only
 				fluid
+				:invalid="!!getError('startTime')"
 			/>
+			<span
+				v-if="!!getError('startTime')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('startTime') }}
+			</span>
 		</div>
 		<div class="mb-4">
 			<label
@@ -114,16 +166,23 @@
 				id="endTime"
 				time-only
 				fluid
+				:invalid="!!getError('endTime')"
 			/>
+			<span
+				v-if="!!getError('endTime')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('endTime') }}
+			</span>
 		</div>
 	</div>
 	<ClientOnly>
-		<Teleport to="#test">
+		<Teleport to="#footer-content">
 			<AppButton
 				variant="blue"
-				@on-click=""
+				@on-click="onSubmitForm"
 			>
-				Salvar
+				{{ loading ? 'Salvando...' : 'Salvar' }}
 			</AppButton>
 		</Teleport>
 	</ClientOnly>
@@ -131,6 +190,13 @@
 
 <script setup lang="ts">
 import type {IEvent} from '~/interfaces'
+import * as zod from 'zod'
+
+const {$toast, $api} = useNuxtApp()
+
+const {user} = useUserStore()
+
+const loading = ref<boolean>(false)
 
 const initialValues: IEvent = {
 	id: 0,
@@ -142,16 +208,83 @@ const initialValues: IEvent = {
 	datetime: undefined,
 	startTime: undefined,
 	endTime: undefined,
-	adminId: undefined,
+	adminId: user?.userId,
 }
 
 const form = reactive<IEvent>({
 	...initialValues,
 })
 
+const schema = zod.object({
+	name: zod
+		.string({
+			required_error: 'Nome é obrigatório',
+		})
+		.min(1, {message: 'Nome é obrigatório'}),
+	location: zod
+		.string({
+			required_error: 'Local é obrigatório',
+		})
+		.min(1, {message: 'Local é obrigatório'}),
+	maxParticipants: zod.number({
+		required_error: 'Número Máx. de Participantes: é obrigatório',
+		invalid_type_error: 'Número Máx. de Participantes: é obrigatório',
+	}),
+	maxOfParticipantsWaitingList: zod.number({
+		required_error: 'Número Máx. de Suplentes: é obrigatório',
+		invalid_type_error: 'Número Máx. de Suplentes: é obrigatório',
+	}),
+	sportId: zod.number({
+		required_error: 'Esporte é Obrigatório',
+		invalid_type_error: 'Esporte é Obrigatório',
+	}),
+	datetime: zod.date({
+		required_error: 'Data é Obrigatório',
+		invalid_type_error: 'Data é Obrigatório',
+	}),
+	startTime: zod.date({
+		required_error: 'Horário de Início é Obrigatório',
+		invalid_type_error: 'Horário de Início é Obrigatório',
+	}),
+	endTime: zod.date({
+		required_error: 'Horário de Término é Obrigatório',
+		invalid_type_error: 'Horário de Término é Obrigatório',
+	}),
+})
+
+const {validate, isValid, getError} = useValidationForm(schema, form)
+
 const {data: sports, status} = await useFetch('/api/v1/sport', {
 	lazy: true,
 })
+
+const onSubmitForm = async () => {
+	await validate()
+
+	if (!isValid.value) return
+
+	try {
+		loading.value = true
+		const response = await $api.raw('/api/v1/events', {
+			method: 'POST',
+			body: form,
+		})
+
+		if (response.status !== 200) {
+			throw new Error('Ocorreu um erro ao criar o evento')
+		}
+
+		$toast.success('Evento criado com sucesso!')
+
+		const {id} = response._data!
+
+		await navigateTo(`/v1/event/details/${id}`)
+	} catch (error) {
+		$toast.error(error ?? 'Ocorreu um erro ao criar o evento')
+	} finally {
+		loading.value = false
+	}
+}
 </script>
 
 <style scoped></style>

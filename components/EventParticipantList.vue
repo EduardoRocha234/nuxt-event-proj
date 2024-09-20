@@ -10,7 +10,18 @@
 		<div class="flex">{{ parcipantsList.length }}/{{ maxParticipants }}</div>
 	</div>
 	<div class="mt-2 relative h-80 rounded-xl px-5 pt-4 pb-9 bg-slate-100">
-		<ol class="w-full h-full overflow-scroll px-2">
+		<div
+			v-if="parcipantsList.length === 0"
+			class="flex justify-center items-center"
+		>
+			<span class="text-slate-600 font-semibold"
+				>Ainda não tem participantes</span
+			>
+		</div>
+		<ol
+			v-else
+			class="w-full h-full overflow-scroll px-2"
+		>
 			<li
 				v-for="(participant, index) in parcipantsList"
 				:key="index"
@@ -39,7 +50,10 @@
 			title="Formar times"
 		>
 			<div class="flex gap-2">
-				<div class="px-2 py-1 w-full h-full bg-green-300 rounded-full text-xs">
+				<div
+					class="px-2 py-1 w-full h-full bg-green-300 rounded-full text-xs"
+					v-if="participantsConfirmed.length"
+				>
 					{{ participantsConfirmed.length }}
 				</div>
 				<div
@@ -50,10 +64,11 @@
 				</div>
 			</div>
 			<Icon
+				v-if="participantsConfirmed.length"
 				name="fa6-solid:people-group"
 				:size="20"
 				class="text-slate-500"
-				@click.stop="emits('openModal')"
+				@click.stop="emits('openShuffleTeamModal')"
 			/>
 		</div>
 	</div>
@@ -70,7 +85,7 @@ const props = defineProps<{
 const {parcipantsList, maxParticipants} = toRefs(props)
 
 const emits = defineEmits<{
-	(event: 'openModal'): void
+	(event: 'openShuffleTeamModal'): void
 }>()
 
 const {user} = useUserStore()

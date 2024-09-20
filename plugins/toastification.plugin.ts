@@ -5,9 +5,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 	const options: vt.PluginOptions = {
 		timeout: 4500,
 		position: vt.POSITION.TOP_RIGHT,
-		transition: 'Vue-Toastification__fade',
-        draggable: true,
-        hideProgressBar: true,
+		transition: 'Vue-Toastification__bounce',
+		draggable: true,
+		hideProgressBar: true,
+		maxToasts: 2,
 	}
 
 	nuxtApp.vueApp.use(vt.default, options)

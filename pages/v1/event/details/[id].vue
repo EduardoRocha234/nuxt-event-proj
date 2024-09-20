@@ -46,26 +46,28 @@
 			:event="event"
 		/>
 	</AppSectionCard>
-	<AppFooterBarEmpty>
-		<AppButton
-			v-if="!userIsInParticipantsList"
-			:disabled="event?.participants?.length === event?.maxParticipants"
-			@on-click="joinInEvent"
-		>
-			<Icon
-				name="mdi:plus"
-				:size="25"
-			/>
-			Entrar na Lista
-		</AppButton>
-		<AppButton
-			v-else
-			variant="orange"
-			@on-click="exitEvent"
-		>
-			Sair da Lista
-		</AppButton>
-	</AppFooterBarEmpty>
+	<ClientOnly>
+		<Teleport to="#footer-content">
+			<AppButton
+				v-if="!userIsInParticipantsList"
+				:disabled="event?.participants?.length === event?.maxParticipants"
+				@on-click="joinInEvent"
+			>
+				<Icon
+					name="mdi:plus"
+					:size="25"
+				/>
+				Entrar na Lista
+			</AppButton>
+			<AppButton
+				v-else
+				variant="orange"
+				@on-click="exitEvent"
+			>
+				Sair da Lista
+			</AppButton>
+		</Teleport>
+	</ClientOnly>
 </template>
 
 <script setup lang="ts">

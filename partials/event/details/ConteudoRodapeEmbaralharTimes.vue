@@ -57,7 +57,7 @@ const shuffleTeamsArray = ref<IShuffleTeams>({
 })
 
 const participantsConfirmed = computed(() =>
-	event.value.participants.filter((p) => p.status === 'confirmed')
+	event.value?.participants?.filter((p) => p.status === 'confirmed')
 )
 
 const shuffleArray = (array: IParticipant[]) => {
@@ -125,7 +125,7 @@ const copyTeamsToClipboard = async () => {
 
 const shuffleTeams = () => {
 	shuffleTeamsArray.value = divideTeams(
-		participantsConfirmed.value,
+		participantsConfirmed.value ?? [],
 		teamCount.value,
 		teamSize.value
 	)

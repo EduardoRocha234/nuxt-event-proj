@@ -23,7 +23,7 @@
 			<AppEventParticipantList
 				:parcipants-list="event.participants!"
 				:max-participants="event.maxParticipants!"
-				@open-modal="openModal"
+				@open-shuffle-team-modal="openModal"
 			/>
 		</div>
 	</div>
