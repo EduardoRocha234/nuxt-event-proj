@@ -48,24 +48,32 @@
 	</AppSectionCard>
 	<ClientOnly>
 		<Teleport to="#footer-content">
-			<AppButton
-				v-if="!userIsInParticipantsList"
-				:disabled="event?.participants?.length === event?.maxParticipants"
-				@on-click="joinInEvent"
-			>
-				<Icon
-					name="mdi:plus"
-					:size="25"
-				/>
-				Entrar na Lista
-			</AppButton>
-			<AppButton
-				v-else
-				variant="orange"
-				@on-click="exitEvent"
-			>
-				Sair da Lista
-			</AppButton>
+			<template v-if="event?.openParticipantsListDate && timeRemaining > 0">
+				<span class="text-lg"> Lista abre em: </span>
+				<span class="text-lg font-semibold">
+					{{ formattedTime }}
+				</span>
+			</template>
+			<template v-else>
+				<AppButton
+					v-if="!userIsInParticipantsList"
+					:disabled="event?.participants?.length === event?.maxParticipants"
+					@on-click="joinInEvent"
+				>
+					<Icon
+						name="mdi:plus"
+						:size="25"
+					/>
+					Entrar na Lista
+				</AppButton>
+				<AppButton
+					v-else
+					variant="orange"
+					@on-click="exitEvent"
+				>
+					Sair da Lista
+				</AppButton>
+			</template>
 		</Teleport>
 	</ClientOnly>
 </template>
@@ -76,14 +84,42 @@ import type {IEvent} from '~/interfaces'
 const {$api, $toast, $socket} = useNuxtApp()
 const {user} = useUserStore()
 
+const dayjs = useDayjs()
+
 const navbarStore = useNavBarStore()
 const footerbarStore = useFooterBarStore()
 const route = useRoute()
 const eventId = route.params.id
+const timeRemaining = ref<number>(0)
+const timerInterval = ref<NodeJS.Timeout>()
+
+const formattedTime = computed(() => {
+	const seconds = Math.floor((timeRemaining.value / 1000) % 60)
+	const minutes = Math.floor((timeRemaining.value / 1000 / 60) % 60)
+	const hours = Math.floor((timeRemaining.value / (1000 * 60 * 60)) % 24)
+	const days = Math.floor(timeRemaining.value / (1000 * 60 * 60 * 24))
+	return `${days}d ${hours}h ${minutes}m ${seconds}s`
+})
 
 const userIsInParticipantsList = computed(
 	() => !!event?.value?.participants?.some((p) => p.userId === user?.userId)
 )
+
+const updateTimeRemaining = () => {
+	if (!event.value?.openParticipantsListDate) return
+
+	const now = new Date().getTime()
+	const targetTime = new Date(
+		convertToLocalTime(event.value?.openParticipantsListDate)
+	).getTime()
+
+	timeRemaining.value = targetTime - now
+
+	if (timeRemaining.value <= 0) {
+		timeRemaining.value = 0
+		clearInterval(timerInterval.value)
+	}
+}
 
 const {data: event, refresh} = await useFetch<IEvent>(
 	`/api/v1/events/${eventId}`
@@ -127,6 +163,16 @@ $socket.on('removeParticipant', async () => await refresh())
 onMounted(() => {
 	navbarStore.setSearchBarIsVisible(false)
 	footerbarStore.setFooterBarVisible(false)
+
+	updateTimeRemaining()
+
+	timerInterval.value = setInterval(() => {
+		updateTimeRemaining()
+	}, 500)
+})
+
+onBeforeUnmount(() => {
+	clearInterval(timerInterval.value)
 })
 </script>
 

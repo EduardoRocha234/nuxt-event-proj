@@ -120,6 +120,7 @@
 			<DatePicker
 				v-model="form.datetime"
 				:min-date="new Date()"
+				date-format="dd/mm/yy"
 				input-id="datetime"
 				show-icon
 				fluid
@@ -175,6 +176,49 @@
 				{{ getError('endTime') }}
 			</span>
 		</div>
+		<div>
+			<div class="flex items-center mb-4">
+				<Checkbox
+					inputId="partcipantsListAlwaysOpen"
+					v-model="partcipantsListAlwaysOpen"
+					:binary="true"
+				/>
+				<label
+					for="partcipantsListAlwaysOpen"
+					class="text-slate-600 text-lg block mb-1 ml-2"
+				>
+					Lista sempre aberta
+				</label>
+			</div>
+			<Transition name="fade">
+				<div
+					v-if="!partcipantsListAlwaysOpen"
+					class="mb-4"
+				>
+					<label
+						for="openParticipantsListDate"
+						class="text-slate-600 text-lg block mb-1"
+					>
+						Hora/Data de abertura da lista:
+					</label>
+					<DatePicker
+						v-model="form.openParticipantsListDate"
+						:max-date="form.datetime || new Date()"
+						date-format="dd/mm/yy"
+						id="openParticipantsListDate"
+						show-time
+						fluid
+						:invalid="!!getError('openParticipantsListDate')"
+					/>
+					<span
+						v-if="!!getError('openParticipantsListDate')"
+						class="text-red-500 text-sm px-1"
+					>
+						{{ getError('openParticipantsListDate') }}
+					</span>
+				</div>
+			</Transition>
+		</div>
 	</div>
 	<ClientOnly>
 		<Teleport to="#footer-content">
@@ -209,7 +253,10 @@ const initialValues: IEvent = {
 	startTime: undefined,
 	endTime: undefined,
 	adminId: user?.userId,
+	openParticipantsListDate: undefined,
 }
+
+const partcipantsListAlwaysOpen = ref<boolean>(true)
 
 const form = reactive<IEvent>({
 	...initialValues,
@@ -250,6 +297,20 @@ const schema = zod.object({
 		required_error: 'Horário de Término é Obrigatório',
 		invalid_type_error: 'Horário de Término é Obrigatório',
 	}),
+	openParticipantsListDate: zod
+		.date()
+		.optional()
+		.refine(
+			(value: any) => {
+				if (!partcipantsListAlwaysOpen.value) {
+					return zod.date().safeParse(value).success
+				}
+				return true
+			},
+			{
+				message: 'Hora/Data de abertura da lista é obrigatório.',
+			}
+		),
 })
 
 const {validate, isValid, getError} = useValidationForm(schema, form)
@@ -262,6 +323,8 @@ const onSubmitForm = async () => {
 	await validate()
 
 	if (!isValid.value) return
+
+	if (partcipantsListAlwaysOpen.value) form.openParticipantsListDate = undefined
 
 	try {
 		loading.value = true
