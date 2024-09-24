@@ -87,7 +87,7 @@
 				{{ getError('maxParticipants') }}
 			</span>
 		</div>
-		<div class="flex-auto mb-4">
+		<div class="flex-auto mb-6">
 			<label
 				for="maxOfParticipantsWaitingList"
 				class="text-slate-600 text-lg block mb-1"
@@ -110,31 +110,83 @@
 				{{ getError('maxOfParticipantsWaitingList') }}
 			</span>
 		</div>
-		<div class="mb-4">
-			<label
-				for="datetime"
-				class="text-slate-600 text-lg block mb-1"
+		<Divider />
+		<div>
+			<div class="flex items-center mb-4 mt-2">
+				<Checkbox
+					inputId="partcipantsListAlwaysOpen"
+					v-model="isRecurring"
+					binary
+				/>
+				<label
+					for="partcipantsListAlwaysOpen"
+					class="text-slate-600 text-lg block mb-1 ml-2"
+				>
+					Recorrente
+				</label>
+			</div>
+			<Transition
+				name="fade"
+				:duration="200"
 			>
-				Data:
-			</label>
-			<DatePicker
-				v-model="form.datetime"
-				:min-date="new Date()"
-				date-format="dd/mm/yy"
-				input-id="datetime"
-				show-icon
-				fluid
-				icon-display="input"
-				:invalid="!!getError('datetime')"
-			/>
-			<span
-				v-if="!!getError('datetime')"
-				class="text-red-500 text-sm px-1"
-			>
-				{{ getError('datetime') }}
-			</span>
+				<div
+					class="flex-auto mb-4"
+					v-if="isRecurring"
+				>
+					<label
+						for="location"
+						class="text-slate-600 text-lg block mb-1"
+					>
+						Dia da Semana:
+					</label>
+					<Select
+						v-model="form.recurringDay"
+						:options="daysOfWeekOptions"
+						option-label="label"
+						option-value="value"
+						placeholder="Selecione"
+						:loading="status === 'pending'"
+						:invalid="!!getError('recurringDay')"
+						fluid
+					/>
+					<span
+						v-if="!!getError('recurringDay')"
+						class="text-red-500 text-sm px-1"
+					>
+						{{ getError('recurringDay') }}
+					</span>
+				</div>
+				<div
+					class="mb-4"
+					v-else
+				>
+					<label
+						for="datetime"
+						class="text-slate-600 text-lg block mb-1"
+					>
+						Data:
+					</label>
+					<DatePicker
+						v-model="form.datetime"
+						:min-date="new Date()"
+						date-format="dd/mm/yy"
+						input-id="datetime"
+						show-icon
+						show-button-bar
+						fluid
+						icon-display="input"
+						:invalid="!!getError('datetime')"
+					/>
+					<span
+						v-if="!!getError('datetime')"
+						class="text-red-500 text-sm px-1"
+					>
+						{{ getError('datetime') }}
+					</span>
+				</div>
+			</Transition>
 		</div>
-		<div class="mb-4">
+		<div class="mb-6">
 			<label
 				for="startTime"
 				class="text-slate-600 text-lg block mb-1"
@@ -176,8 +228,9 @@
 				{{ getError('endTime') }}
 			</span>
 		</div>
+		<Divider />
 		<div>
-			<div class="flex items-center mb-4">
+			<div class="flex items-center mb-4 mt-2">
 				<Checkbox
 					inputId="partcipantsListAlwaysOpen"
 					v-model="partcipantsListAlwaysOpen"
@@ -207,6 +260,7 @@
 						date-format="dd/mm/yy"
 						id="openParticipantsListDate"
 						show-time
+						:time-only="isRecurring"
 						fluid
 						:invalid="!!getError('openParticipantsListDate')"
 					/>
@@ -233,7 +287,7 @@
 </template>
 
 <script setup lang="ts">
-import type {IEvent} from '~/interfaces'
+import {EdaysOfWeek, type IEvent} from '~/interfaces'
 import * as zod from 'zod'
 
 const {$toast, $api} = useNuxtApp()
@@ -254,9 +308,11 @@ const initialValues: IEvent = {
 	endTime: undefined,
 	adminId: user?.userId,
 	openParticipantsListDate: undefined,
+	recurringDay: undefined,
 }
 
 const partcipantsListAlwaysOpen = ref<boolean>(true)
+const isRecurring = ref<boolean>(false)
 
 const form = reactive<IEvent>({
 	...initialValues,
@@ -285,10 +341,6 @@ const schema = zod.object({
 		required_error: 'Esporte é Obrigatório',
 		invalid_type_error: 'Esporte é Obrigatório',
 	}),
-	datetime: zod.date({
-		required_error: 'Data é Obrigatório',
-		invalid_type_error: 'Data é Obrigatório',
-	}),
 	startTime: zod.date({
 		required_error: 'Horário de Início é Obrigatório',
 		invalid_type_error: 'Horário de Início é Obrigatório',
@@ -297,6 +349,24 @@ const schema = zod.object({
 		required_error: 'Horário de Término é Obrigatório',
 		invalid_type_error: 'Horário de Término é Obrigatório',
 	}),
+	// datetime: zod.date({
+	// 	required_error: 'Data é Obrigatório',
+	// 	invalid_type_error: 'Data é Obrigatório',
+	// }),
+	datetime: zod
+		.date()
+		.optional()
+		.refine(
+			(value: any) => {
+				if (!isRecurring.value) {
+					return zod.date().safeParse(value).success
+				}
+				return true
+			},
+			{
+				message: 'Data é Obrigatório',
+			}
+		),
 	openParticipantsListDate: zod
 		.date()
 		.optional()
@@ -319,12 +389,48 @@ const {data: sports, status} = await useFetch('/api/v1/sport', {
 	lazy: true,
 })
 
+const daysOfWeekOptions = Object.entries(EdaysOfWeek).map(([key, value]) => ({
+	label: key,
+	value,
+}))
+
+const getNextDayOfWeek = (dayOfWeek: EdaysOfWeek) => {
+	const daysOfWeekMap = {
+		Sunday: 0,
+		Monday: 1,
+		Tuesday: 2,
+		Wednesday: 3,
+		Thursday: 4,
+		Friday: 5,
+		Saturday: 6,
+	}
+
+	const today = new Date()
+	const todayDay = today.getDay()
+	const targetDay = daysOfWeekMap[dayOfWeek]
+
+	// Se o dia atual já for o dia selecionado, define para a próxima semana
+	let daysUntilNextTarget = targetDay - todayDay
+	if (daysUntilNextTarget <= 0) {
+		daysUntilNextTarget += 6
+	}
+
+	const nextTargetDate = new Date(today)
+	nextTargetDate.setDate(today.getDate() + daysUntilNextTarget)
+
+	return nextTargetDate.toISOString()
+}
+
 const onSubmitForm = async () => {
 	await validate()
 
 	if (!isValid.value) return
 
 	if (partcipantsListAlwaysOpen.value) form.openParticipantsListDate = undefined
+
+	if (isRecurring.value) {
+		form.datetime = getNextDayOfWeek(form.recurringDay!)
+	}
 
 	try {
 		loading.value = true
