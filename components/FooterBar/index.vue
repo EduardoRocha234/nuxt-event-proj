@@ -7,7 +7,7 @@
 			:model="items"
 			:radius="80"
 			direction="up"
-			style="position: absolute; left: calc(50% - 3rem); bottom: 43px"
+			style="position: absolute; left: calc(50% - 3rem); bottom: 40px"
 		>
 			<template #item="{item, toggleCallback}">
 				<div
@@ -31,7 +31,6 @@
 				<Icon
 					name="fluent:person-48-filled"
 					:size="25"
-					class=""
 				/>
 				<span class="text-sm"> Perfil </span>
 			</div>

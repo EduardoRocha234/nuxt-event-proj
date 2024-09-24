@@ -1,8 +1,9 @@
-import { IEvent } from "~/interfaces"
+import {IEvent, MetaData, PaginationParams} from '~/interfaces'
 
 export default defineEventHandler(async (event) => {
 	const {API_BASE_URL} = useRuntimeConfig(event).public
 	const token = getCookie(event, 'token')
+	const params = new URLSearchParams(getQuery(event)).toString() 
 
 	if (!token) {
 		throw createError({
@@ -12,9 +13,11 @@ export default defineEventHandler(async (event) => {
 	}
 
 	try {
-		const res = await fetch(`${API_BASE_URL}/event`, {
+		const res = await fetch(`${API_BASE_URL}/event?${params}`, {
 			headers: {Authorization: `Bearer ${token}`},
 		})
+
+		console.log
 
 		if (res.status !== 200) {
 			throw createError({
@@ -23,7 +26,7 @@ export default defineEventHandler(async (event) => {
 			})
 		}
 
-		return (await res.json()) as {events: IEvent[]}
+		return (await res.json()) as {events: IEvent[]; metadata: MetaData}
 	} catch (err) {
 		throw createError({
 			status: 500,

@@ -156,9 +156,15 @@ const exitEvent = async () => {
 	$toast.error('Ocorreu um erro ao se remover da lista.')
 }
 
-$socket.on('insertParticipant', async () => await refresh())
+$socket.on('insertParticipant', async () => {
+	console.log('teste')
+	await refresh()
+})
 
-$socket.on('removeParticipant', async () => await refresh())
+$socket.on('removeParticipant', async () => {
+	console.log('teste2')
+	await refresh()
+})
 
 onMounted(() => {
 	navbarStore.setSearchBarIsVisible(false)

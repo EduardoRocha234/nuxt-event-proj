@@ -2,7 +2,7 @@
 	<header
 		ref="header"
 		id="header"
-		class="px-5  relative flex flex-col font-medium justify-between text-lg transition-all ease-in-out duration-300 bg-blue-500"
+		class="px-5 relative flex flex-col font-medium justify-between text-lg transition-all ease-in-out duration-300 bg-blue-500"
 		:class="{
 			'rounded-b-[3rem]': navbarStore.searchBarIsVisible,
 			'py-9': navbarStore.searchBarIsVisible,
@@ -18,7 +18,7 @@
 				:size="35"
 				class="text-white"
 			/>
-			<span>RachaConnect</span>
+			<NuxtLink to="/">RachaConnect</NuxtLink>
 			<div
 				class="flex justify-center items-center p-2 rounded-full bg-blue-400"
 			>
