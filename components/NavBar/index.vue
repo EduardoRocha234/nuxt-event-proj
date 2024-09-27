@@ -16,9 +16,10 @@
 			<Icon
 				name="ri:menu-2-fill"
 				:size="35"
-				class="text-white"
+				class="text-white cursor-pointer hover:text-slate-300 transition-colors"
+				@click="sideBarVisible = true"
 			/>
-			<NuxtLink to="/">RachaConnect</NuxtLink>
+			<NuxtLink to="/">PgConnect</NuxtLink>
 			<div
 				class="flex justify-center items-center p-2 rounded-full bg-blue-400"
 			>
@@ -62,41 +63,74 @@
 			class="absolute -bottom-4 flex gap-2"
 			v-if="navbarStore.searchBarIsVisible"
 		>
-			<div
-				class="flex items-center gap-1 bg-orange-500 text-white text-md px-2 py-1 rounded-full"
-			>
-				<Icon
-					name="la:basketball-ball"
-					:size="20"
-				/>
-				Basquete
-			</div>
-			<div
-				class="flex items-center gap-1 bg-green-500 text-white text-md px-2 py-1 rounded-full"
-			>
-				<Icon
-					name="mdi:soccer"
-					:size="20"
-				/>
-				Futsal
-			</div>
-			<div
-				class="flex items-center gap-1 bg-blue-300 text-white text-md px-2 py-1 rounded-full"
-			>
-				<Icon
-					name="la:infinity"
-					:size="20"
-				/>
-				Todos
-			</div>
+			<template v-if="status === 'pending'">
+				<Skeleton
+					width="6rem"
+					height="2.5rem"
+					borderRadius="3rem"
+				></Skeleton>
+				<Skeleton
+					width="6rem"
+					height="2.5rem"
+					borderRadius="3rem"
+				></Skeleton>
+				<Skeleton
+					width="6rem"
+					height="2.5rem"
+					borderRadius="3rem"
+				></Skeleton>
+			</template>
+			<template v-else>
+				<div
+					v-for="sport in sports"
+					class="flex items-center gap-1 text-white text-md px-2 py-1 rounded-full transition-all ease-in duration-100 cursor-pointer"
+					:class="[
+						{
+							'border-2 border-slate-300 shadow-sm': sportIdFilter === sport.id,
+							'bg-blue-800': !sport.displayColor,
+						},
+						sport.displayColor,
+					]"
+					@click="eventStore.setSportIdFilter(sport.id)"
+				>
+					<Icon
+						:name="sport.displayIcon"
+						:size="20"
+					/>
+					{{ sport.name }}
+				</div>
+				<div
+					class="flex items-center gap-1 bg-blue-300 text-white text-md px-2 py-1 rounded-full cursor-pointer"
+					:class="{
+						'border-2 border-slate-300 shadow-sm': sportIdFilter === undefined,
+					}"
+					@click="eventStore.setSportIdFilter()"
+				>
+					<Icon
+						name="la:infinity"
+						:size="20"
+					/>
+					Todos
+				</div>
+			</template>
 		</div>
 	</header>
 </template>
 
 <script setup lang="ts">
+import {useEventStore} from '~/stores/event.store'
 import {useNavBarStore} from '~/stores/navBar.store'
 
 const navbarStore = useNavBarStore()
+const eventStore = useEventStore()
+
+const sideBarVisible = defineModel<boolean>('sidebarVisible', {default: false})
+
+const {sportIdFilter} = storeToRefs(useEventStore())
+
+const {data: sports, status} = await useFetch('/api/v1/sport', {
+	lazy: true,
+})
 </script>
 
 <style scoped></style>

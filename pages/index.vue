@@ -37,25 +37,27 @@
 
 <script setup lang="ts">
 import type {IEvent, MetaData, PaginationParams} from '~/interfaces'
+import {useEventStore} from '~/stores/event.store'
 import {useFooterBarStore} from '~/stores/footerBar.store'
 import {useNavBarStore} from '~/stores/navBar.store'
 
 const el = ref<HTMLElement | null>(null)
 
-const pagination = reactive<PaginationParams>({
+const {sportIdFilter} = storeToRefs(useEventStore())
+const navbarStore = useNavBarStore()
+const footerStore = useFooterBarStore()
+const {arrivedState} = useScroll(document)
+
+const params = reactive<
+	PaginationParams & {
+		sportId?: number
+	}
+>({
 	page: 1,
 	pageSize: 5,
+	sportId: sportIdFilter.value,
 })
 
-const {data, status} = await useFetch<{events: IEvent[]; metadata: MetaData}>(
-	'/api/v1/events',
-	{
-		params: pagination,
-		watch: [pagination],
-	}
-)
-
-const {arrivedState} = useScroll(document)
 
 watch(arrivedState, (nv) => {
 	if (
@@ -63,12 +65,21 @@ watch(arrivedState, (nv) => {
 		!data.value?.metadata.isLastPage &&
 		status.value !== 'pending'
 	) {
-		pagination.pageSize += 5
+		params.pageSize += 5
 	}
 })
 
-const navbarStore = useNavBarStore()
-const footerStore = useFooterBarStore()
+watch(sportIdFilter, (nv) => {
+	params.sportId = nv
+})
+
+const {data, status} = await useFetch<{events: IEvent[]; metadata: MetaData}>(
+	'/api/v1/events',
+	{
+		params: params,
+		watch: [params],
+	}
+)
 
 onMounted(() => {
 	navbarStore.setSearchBarIsVisible(true)

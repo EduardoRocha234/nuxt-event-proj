@@ -1,14 +1,23 @@
+export type NavBarStoreType = {
+	isNavbarVisible: boolean
+	searchBarIsVisible: boolean
+}
+
 export const useNavBarStore = defineStore('navBarStore', {
-	state: () => ({
-		isNavbarVisible: true,
-		searchBarIsVisible: true,
-	}),
+	state: () =>
+		({
+			isNavbarVisible: true,
+			searchBarIsVisible: true,
+		} as NavBarStoreType),
 	getters: {
 		navBarVisible(): boolean {
 			return this.isNavbarVisible
 		},
 		searchBarVisible(): boolean {
 			return this.searchBarIsVisible
+		},
+		eventFilters() {
+			return this.eventFilters
 		},
 	},
 	actions: {

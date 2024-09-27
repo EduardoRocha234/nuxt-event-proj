@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<AppNavBar />
+		<AppNavBar v-model:sidebar-visible="sideBarVisible" />
+		<AppSidebar v-model:visible="sideBarVisible"/>
 		<!-- <AppBreadCrumb /> -->
 		<div class="mb-20">
 			<slot />
@@ -12,6 +13,8 @@
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const sideBarVisible = ref<boolean>(false)
+</script>
 
 <style scoped></style>

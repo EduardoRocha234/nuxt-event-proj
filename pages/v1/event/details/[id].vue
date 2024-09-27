@@ -89,7 +89,7 @@ const dayjs = useDayjs()
 const navbarStore = useNavBarStore()
 const footerbarStore = useFooterBarStore()
 const route = useRoute()
-const eventId = route.params.id
+const eventId = ref(route.params.id)
 const timeRemaining = ref<number>(0)
 const timerInterval = ref<NodeJS.Timeout>()
 
@@ -122,16 +122,16 @@ const updateTimeRemaining = () => {
 }
 
 const {data: event, refresh} = await useFetch<IEvent>(
-	`/api/v1/events/${eventId}`
+	`/api/v1/events/${eventId.value}`
 )
 
 const joinInEvent = async () => {
-	const req = await $api.raw(`/api/v1/events/${eventId}/join/${user?.userId}`, {
+	const req = await $api.raw(`/api/v1/events/${eventId.value}/join/${user?.userId}`, {
 		method: 'POST',
 	})
 
 	if (req.status === 201) {
-		await refresh()
+		// await refresh()
 		$toast.success('Participante adicionado com sucesso!')
 		return
 	}
@@ -141,14 +141,14 @@ const joinInEvent = async () => {
 
 const exitEvent = async () => {
 	const req = await $api.raw(
-		`/api/v1/events/${eventId}/remove/${user?.userId}`,
+		`/api/v1/events/${eventId.value}/remove/${user?.userId}`,
 		{
 			method: 'DELETE',
 		}
 	)
 
 	if (req.status === 200) {
-		await refresh()
+		// await refresh()
 		$toast.success('Participante removido com sucesso!')
 		return
 	}
