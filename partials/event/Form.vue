@@ -3,7 +3,7 @@
 		<div class="flex-auto mb-4">
 			<label
 				for="name"
-				class="text-slate-600 text-lg block mb-1"
+				class="text-slate-600 text-lg block mb-1 required"
 			>
 				Nome do Evento / Racha:
 			</label>
@@ -23,7 +23,7 @@
 		<div class="flex-auto mb-4">
 			<label
 				for="location"
-				class="text-slate-600 text-lg block mb-1"
+				class="text-slate-600 text-lg block mb-1 required"
 			>
 				Local:
 			</label>
@@ -43,7 +43,7 @@
 		<div class="flex-auto mb-4">
 			<label
 				for="location"
-				class="text-slate-600 text-lg block mb-1"
+				class="text-slate-600 text-lg block mb-1 required"
 			>
 				Esporte:
 			</label>
@@ -67,7 +67,7 @@
 		<div class="flex-auto mb-4">
 			<label
 				for="maxParticipants"
-				class="text-slate-600 text-lg block mb-1"
+				class="text-slate-600 text-lg block mb-1 required"
 			>
 				Número Máx. de Participantes:
 			</label>
@@ -90,7 +90,7 @@
 		<div class="flex-auto mb-6">
 			<label
 				for="maxOfParticipantsWaitingList"
-				class="text-slate-600 text-lg block mb-1"
+				class="text-slate-600 text-lg block mb-1 required"
 			>
 				Número Máx. de Suplentes:
 			</label>
@@ -135,7 +135,7 @@
 				>
 					<label
 						for="location"
-						class="text-slate-600 text-lg block mb-1"
+						class="text-slate-600 text-lg block mb-1 required"
 					>
 						Dia da Semana:
 					</label>
@@ -162,7 +162,7 @@
 				>
 					<label
 						for="datetime"
-						class="text-slate-600 text-lg block mb-1"
+						class="text-slate-600 text-lg block mb-1 required"
 					>
 						Data:
 					</label>
@@ -189,7 +189,7 @@
 		<div class="mb-6">
 			<label
 				for="startTime"
-				class="text-slate-600 text-lg block mb-1"
+				class="text-slate-600 text-lg block mb-1 required"
 			>
 				Horário de Início:
 			</label>
@@ -210,7 +210,7 @@
 		<div class="mb-4">
 			<label
 				for="endTime"
-				class="text-slate-600 text-lg block mb-1"
+				class="text-slate-600 text-lg block mb-1 required"
 			>
 				Horário de Término:
 			</label>
@@ -229,6 +229,7 @@
 			</span>
 		</div>
 		<Divider />
+		{{ form.openParticipantsListDate }}
 		<div>
 			<div class="flex items-center mb-4 mt-2">
 				<Checkbox
@@ -250,19 +251,19 @@
 				>
 					<label
 						for="openParticipantsListDate"
-						class="text-slate-600 text-lg block mb-1"
+						class="text-slate-600 text-lg block mb-1 required"
 					>
 						Hora/Data de abertura da lista:
 					</label>
 					<DatePicker
+						id="openParticipantsListDate"
 						v-model="form.openParticipantsListDate"
 						:max-date="form.datetime || new Date()"
-						date-format="dd/mm/yy"
-						id="openParticipantsListDate"
-						show-time
 						:time-only="isRecurring"
-						fluid
 						:invalid="!!getError('openParticipantsListDate')"
+						date-format="dd/mm/yy"
+						show-time
+						fluid
 					/>
 					<span
 						v-if="!!getError('openParticipantsListDate')"
@@ -272,6 +273,22 @@
 					</span>
 				</div>
 			</Transition>
+		</div>
+		<div class="mb-4">
+			<label
+				for="openParticipantsListDate"
+				class="text-slate-600 text-lg block mb-1"
+			>
+				Descrição:
+			</label>
+			<Textarea
+				v-model="form.description"
+				autoResize
+				fluid
+				rows="5"
+				cols="30"
+				placeholder="Digite uma descrição para o evento (opcional)"
+			/>
 		</div>
 	</div>
 	<ClientOnly>
@@ -308,6 +325,7 @@ const initialValues: IEvent = {
 	endTime: undefined,
 	adminId: user?.userId,
 	openParticipantsListDate: undefined,
+	description: undefined,
 	recurringDay: undefined,
 }
 
@@ -421,6 +439,15 @@ const getNextDayOfWeek = (dayOfWeek: EdaysOfWeek) => {
 	return nextTargetDate.toISOString()
 }
 
+watch(
+	() => form.recurringDay,
+	(nv) => {
+		if (nv) {
+			form.openParticipantsListDate = new Date(getNextDayOfWeek(nv))
+		}
+	}
+)
+
 const onSubmitForm = async () => {
 	await validate()
 
@@ -456,4 +483,14 @@ const onSubmitForm = async () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+label.required {
+	position: relative;
+}
+
+label.required::after {
+	content: '*';
+	position: absolute;
+	color: #e53e3e;
+}
+</style>

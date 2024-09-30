@@ -10,18 +10,27 @@
 		<span class="text-3xl font-semibold mt-2 w-full mb-4">
 			{{ event.name }}</span
 		>
-		<AppDateHourBar
-			:datetime="event.datetime!"
-			:start-time="event.startTime!"
-			:end-time="event.endTime!"
-		/>
-		<AppLocalizationBar
-			:location="event.location!"
-			class="mt-2"
-		/>
+		<div class="flex flex-col gap-2">
+			<AppDateHourBar
+				:datetime="event.datetime!"
+				:start-time="event.startTime!"
+				:end-time="event.endTime!"
+				:is-recurring="isRecurring"
+			/>
+			<AppLocalizationBar :location="event.location!" />
+			<div
+				v-if="event.description"
+				class="relative flex items-center gap-2 bg-slate-100 rounded-xl p-3 mt-2"
+			>
+				<span class="absolute -top-3 text-slate-500 text-xs font-semibold"
+					>Descrição</span
+				>
+				<span class="text-sm text-slate-600">{{ event.description }}</span>
+			</div>
+		</div>
 		<div class="mt-5">
 			<AppEventParticipantList
-				:parcipants-list="event.participants!"
+				:parcipants-list="eventParticipantList!"
 				:max-participants="event.maxParticipants!"
 				@open-shuffle-team-modal="openModal"
 			/>
@@ -110,10 +119,14 @@
 </template>
 
 <script setup lang="ts">
-import type {IEvent} from '~/interfaces'
+import type {IEvent, IParticipant} from '~/interfaces'
 import type PartialCounteudoRodapeModal from './ConteudoRodapeEmbaralharTimes.vue'
 
-const props = defineProps<{imageSrc: string; event: IEvent}>()
+const props = defineProps<{
+	imageSrc: string
+	event: IEvent
+	eventParticipantList: IParticipant[]
+}>()
 
 const {event} = toRefs(props)
 
@@ -134,6 +147,8 @@ const handleShuffleTeams = () => {
 const openModal = () => {
 	modal.value = true
 }
+
+const isRecurring = computed(() => !!event?.value.openParticipantsListDate)
 </script>
 
 <style scoped></style>

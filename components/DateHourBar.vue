@@ -10,17 +10,19 @@
 		<div class="flex flex-col">
 			<span class="font-semibold uppercase">{{ dateFormat }} </span>
 			<span class="text-xs text-slate-600"
-				>{{ nameWeekDayFormat }}, {{ startAndEndTimeFormat }}</span
+				>{{ isRecurring ? 'Toda ' : '' }} {{ nameWeekDayFormat }},
+				{{ startAndEndTimeFormat }}</span
 			>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-const {datetime, endTime, startTime} = defineProps<{
+const {datetime, endTime, startTime, isRecurring} = defineProps<{
 	datetime: string
 	startTime: string
 	endTime: string
+	isRecurring: boolean
 }>()
 
 const dayjs = useDayjs()
