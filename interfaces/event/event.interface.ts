@@ -24,5 +24,17 @@ export interface IEvent {
 	maxOfParticipantsWaitingList?: number
 	adminId?: string
 	recurringDay?: EdaysOfWeek
+	description?: string
 	participants?: IParticipant[]
+}
+
+export interface IInsertParticipantWSEvent {
+	eventId: number
+	participant: IParticipant
+	status: string
+}
+
+export interface IRemoveParticipantWSEvent {
+	eventId: number
+	participant: IParticipant
 }
