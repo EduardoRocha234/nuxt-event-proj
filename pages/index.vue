@@ -4,7 +4,7 @@
 		ref="el"
 	>
 		<div class="flex items-center justify-between">
-			<span class="text-xl font-semibold">Próximos Rachas</span>
+			<span class="text-xl font-semibold">Próximos Eventos</span>
 			<button class="flex items-center text-sm text-slate-400">
 				Ver Todos
 				<Icon
@@ -24,19 +24,27 @@
 				:event="event"
 			/>
 		</div>
-		<div
-			v-if="status === 'pending'"
-			class="flex flex-col gap-4"
-		>
-			<LazyAppCardSkeleton />
-			<LazyAppCardSkeleton />
-			<LazyAppCardSkeleton />
-		</div>
+		<TransitionGroup name="fade">
+			<div
+				v-if="status === 'pending'"
+				class="flex flex-col gap-4"
+			>
+				<LazyAppCardSkeleton />
+				<LazyAppCardSkeleton />
+				<LazyAppCardSkeleton />
+			</div>
+		</TransitionGroup>
+		<AppFilterEventsParametersDrawer @apply-filters="setFilters" />
 	</div>
 </template>
 
 <script setup lang="ts">
-import type {IEvent, MetaData, PaginationParams} from '~/interfaces'
+import type {
+	IEvent,
+	IEventFilterParams,
+	MetaData,
+	PaginationParams,
+} from '~/interfaces'
 import {useEventStore} from '~/stores/event.store'
 import {useFooterBarStore} from '~/stores/footerBar.store'
 import {useNavBarStore} from '~/stores/navBar.store'
@@ -44,20 +52,23 @@ import {useNavBarStore} from '~/stores/navBar.store'
 const el = ref<HTMLElement | null>(null)
 
 const {sportIdFilter} = storeToRefs(useEventStore())
-const navbarStore = useNavBarStore()
-const footerStore = useFooterBarStore()
 const {arrivedState} = useScroll(document)
 
-const params = reactive<
-	PaginationParams & {
-		sportId?: number
-	}
->({
+const navbarStore = useNavBarStore()
+const footerStore = useFooterBarStore()
+
+const params = reactive<IEventFilterParams>({
 	page: 1,
 	pageSize: 5,
 	sportId: sportIdFilter.value,
 })
 
+const setFilters = (event: Omit<IEventFilterParams, 'page' | 'pageSize'>) => {
+	params.initialPeriod = event.initialPeriod
+	params.finalPeriod = event.finalPeriod
+	params.sportId = event.sportId
+	params.locale = event.locale
+}
 
 watch(arrivedState, (nv) => {
 	if (

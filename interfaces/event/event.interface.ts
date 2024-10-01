@@ -1,3 +1,4 @@
+import type {PaginationParams} from '../system'
 import type {IParticipant} from './participant.interface'
 
 export enum EdaysOfWeek {
@@ -37,4 +38,11 @@ export interface IInsertParticipantWSEvent {
 export interface IRemoveParticipantWSEvent {
 	eventId: number
 	participant: IParticipant
+}
+
+export interface IEventFilterParams extends PaginationParams {
+	sportId?: number
+	initialPeriod?: Date | string
+	finalPeriod?: Date | string
+	locale?: string
 }

@@ -5,7 +5,7 @@
 				for="name"
 				class="text-slate-600 text-lg block mb-1 required"
 			>
-				Nome do Evento / Racha:
+				Nome do Evento:
 			</label>
 			<InputText
 				v-model="form.name"

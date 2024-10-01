@@ -96,7 +96,6 @@ import type {
 	IInsertParticipantWSEvent,
 	IParticipant,
 	IRemoveParticipantWSEvent,
-	ParticipantInEventList,
 } from '~/interfaces'
 
 const {$api, $toast, $socket} = useNuxtApp()
@@ -187,7 +186,7 @@ const exitTheEvent = async () => {
 }
 
 $socket.on('insertParticipant', async (event: IInsertParticipantWSEvent) => {
-	// essa abordagem usei para testar se melhora (diminui) a quantidade de chamadas ao servidor, pois não precisa buscar as informações do evento sempre que 
+	// essa abordagem usei para testar se melhora (diminui) a quantidade de chamadas ao servidor, pois não precisa buscar as informações do evento sempre que
 	// alguem entrar na lista
 	if (event.eventId === eventId.value) {
 		eventParticipantList.value.push(event.participant)

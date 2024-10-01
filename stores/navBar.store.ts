@@ -16,9 +16,6 @@ export const useNavBarStore = defineStore('navBarStore', {
 		searchBarVisible(): boolean {
 			return this.searchBarIsVisible
 		},
-		eventFilters() {
-			return this.eventFilters
-		},
 	},
 	actions: {
 		setNavBarIsVisible(visible: boolean): void {

@@ -49,6 +49,8 @@
 			</div>
 			<div
 				class="flex items-center px-2 py-1 gap-1 text-sm bg-blue-400 rounded-full text-white"
+				@click="eventStore.setFilterBarVisible(!filterBarIsVisible)"
+
 			>
 				<div class="flex justify-center items-center p-1 border rounded-full">
 					<Icon
@@ -126,7 +128,7 @@ const eventStore = useEventStore()
 
 const sideBarVisible = defineModel<boolean>('sidebarVisible', {default: false})
 
-const {sportIdFilter} = storeToRefs(useEventStore())
+const {sportIdFilter, filterBarIsVisible} = storeToRefs(useEventStore())
 
 const {data: sports, status} = await useFetch('/api/v1/sport', {
 	lazy: true,
