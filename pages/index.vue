@@ -15,14 +15,20 @@
 			</button>
 		</div>
 		<div
-			v-if="data"
+			v-if="data && data.events.length > 0"
 			class="mt-5 flex flex-col gap-4 mb-8"
 		>
-			<AppCardEvent
+			<LazyAppCardEvent
 				v-for="event in data.events"
 				:key="event.id"
 				:event="event"
 			/>
+		</div>
+		<div
+			v-else
+			class="h-full py-20"
+		>
+			<LazyAppNoEventsMessage />
 		</div>
 		<TransitionGroup name="fade">
 			<div
@@ -34,17 +40,12 @@
 				<LazyAppCardSkeleton />
 			</div>
 		</TransitionGroup>
-		<AppFilterEventsParametersDrawer @apply-filters="setFilters" />
+		<LazyAppFilterEventsParametersDrawer @apply-filters="setFilters" />
 	</div>
 </template>
 
 <script setup lang="ts">
-import type {
-	IEvent,
-	IEventFilterParams,
-	MetaData,
-	PaginationParams,
-} from '~/interfaces'
+import type {IEvent, IEventFilterParams, MetaData} from '~/interfaces'
 import {useEventStore} from '~/stores/event.store'
 import {useFooterBarStore} from '~/stores/footerBar.store'
 import {useNavBarStore} from '~/stores/navBar.store'

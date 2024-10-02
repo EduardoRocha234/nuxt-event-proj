@@ -1,15 +1,18 @@
 <template>
 	<div>
-		<AppNavBar v-model:sidebar-visible="sideBarVisible" />
-		<AppSidebar v-model:visible="sideBarVisible"/>
+		<AppNavBar
+			v-model:sidebar-visible="sideBarVisible"
+			v-once
+		/>
+		<LazyAppSidebar v-model:visible="sideBarVisible" />
 		<!-- <AppBreadCrumb /> -->
 		<div class="mb-20">
 			<slot />
 		</div>
-		<AppFooterBar />
-		<AppFooterBarEmpty>
+		<AppFooterBar v-once />
+		<LazyAppFooterBarEmpty>
 			<div id="footer-content"></div>
-		</AppFooterBarEmpty>
+		</LazyAppFooterBarEmpty>
 	</div>
 </template>
 
