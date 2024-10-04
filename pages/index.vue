@@ -52,7 +52,7 @@ import {useNavBarStore} from '~/stores/navBar.store'
 
 const el = ref<HTMLElement | null>(null)
 
-const {sportIdFilter} = storeToRefs(useEventStore())
+const {sportIdFilter, nameFilter} = storeToRefs(useEventStore())
 const {arrivedState} = useScroll(document)
 
 const navbarStore = useNavBarStore()
@@ -62,6 +62,7 @@ const params = reactive<IEventFilterParams>({
 	page: 1,
 	pageSize: 5,
 	sportId: sportIdFilter.value,
+	name: undefined,
 })
 
 const setFilters = (event: Omit<IEventFilterParams, 'page' | 'pageSize'>) => {
@@ -83,6 +84,10 @@ watch(arrivedState, (nv) => {
 
 watch(sportIdFilter, (nv) => {
 	params.sportId = nv
+})
+
+watch(nameFilter, (nv) => {
+	params.name = nv
 })
 
 const {data, status} = await useFetch<{events: IEvent[]; metadata: MetaData}>(

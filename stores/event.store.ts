@@ -2,6 +2,7 @@ export type NavBarStoreType = {
 	filterBarVisible: boolean
 	filters: {
 		sportId?: number
+		name?: string
 	}
 }
 
@@ -11,6 +12,7 @@ export const useEventStore = defineStore('eventStore', {
 			filterBarVisible: false,
 			filters: {
 				sportId: undefined,
+				name: undefined,
 			},
 		} as NavBarStoreType),
 	getters: {
@@ -18,8 +20,11 @@ export const useEventStore = defineStore('eventStore', {
 			return this.filters.sportId
 		},
 		filterBarIsVisible(): boolean {
-            return this.filterBarVisible
-        },
+			return this.filterBarVisible
+		},
+		nameFilter(): string | undefined {
+			return this.filters.name
+		},
 	},
 	actions: {
 		setSportIdFilter(sportId?: number): void {
@@ -27,6 +32,9 @@ export const useEventStore = defineStore('eventStore', {
 		},
 		setFilterBarVisible(visible: boolean): void {
 			this.filterBarVisible = visible
+		},
+		setNameFilter(name?: string): void {
+			this.filters.name = name
 		},
 	},
 	persist: true,

@@ -44,13 +44,13 @@
 					<input
 						class="w-full h-full bg-transparent placeholder:text-slate-100 placeholder:opacity-50 focus:outline-none text-white"
 						placeholder="Pesquisar..."
+						@keyup="pesquisar(($event.target as HTMLInputElement).value)"
 					/>
 				</div>
 			</div>
 			<div
 				class="flex items-center px-2 py-1 gap-1 text-sm bg-blue-400 rounded-full text-white"
 				@click="eventStore.setFilterBarVisible(!filterBarIsVisible)"
-
 			>
 				<div class="flex justify-center items-center p-1 border rounded-full">
 					<Icon
@@ -133,6 +133,8 @@ const {sportIdFilter, filterBarIsVisible} = storeToRefs(useEventStore())
 const {data: sports, status} = await useFetch('/api/v1/sport', {
 	lazy: true,
 })
+
+const pesquisar = useDebounceFn((value) => eventStore.setNameFilter(value), 700)
 </script>
 
 <style scoped></style>

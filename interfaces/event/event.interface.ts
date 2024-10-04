@@ -26,6 +26,7 @@ export interface IEvent {
 	adminId?: string
 	recurringDay?: EdaysOfWeek
 	description?: string
+	daysBeforeOpeningList?: number
 	participants?: IParticipant[]
 }
 
@@ -45,4 +46,5 @@ export interface IEventFilterParams extends PaginationParams {
 	initialPeriod?: Date | string
 	finalPeriod?: Date | string
 	locale?: string
+	name?: string
 }
