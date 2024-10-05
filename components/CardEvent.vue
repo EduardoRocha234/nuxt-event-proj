@@ -82,12 +82,12 @@ const {event} = defineProps<{
 
 const dayjs = useDayjs()
 
-const dateFormat = computed(() => dayjs(event.datetime).format('DD MMM YYYY'))
+const dateFormat = computed(() => dayjs(event.datetime).utc().format('DD MMM YYYY'))
 const hoursFormat = computed(
 	() =>
-		`${dayjs(event.startTime).format('HH:mm A')} - ${dayjs(
+		`${dayjs(event.startTime).local().format('HH:mm A')} - ${dayjs(
 			event.endTime
-		).format('HH:mm A')}`
+		).local().format('HH:mm A')}`
 )
 
 const participantsFormat = computed(() => {
