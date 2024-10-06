@@ -49,7 +49,7 @@
 			</label>
 			<Select
 				v-model="form.sportId"
-				:options="sports || []"
+				:options="sportsSportions || []"
 				option-label="name"
 				option-value="id"
 				placeholder="Selecione"
@@ -114,12 +114,12 @@
 		<div>
 			<div class="flex items-center mb-4 mt-2">
 				<Checkbox
-					inputId="partcipantsListAlwaysOpen"
+					inputId="isRecurring"
 					v-model="isRecurring"
 					binary
 				/>
 				<label
-					for="partcipantsListAlwaysOpen"
+					for="isRecurring"
 					class="text-slate-600 text-lg block mb-1 ml-2"
 				>
 					Recorrente
@@ -134,7 +134,7 @@
 					v-if="isRecurring"
 				>
 					<label
-						for="location"
+						for="recurringDay"
 						class="text-slate-600 text-lg block mb-1 required"
 					>
 						Dia da Semana:
@@ -229,7 +229,6 @@
 			</span>
 		</div>
 		<Divider />
-		{{ form.openParticipantsListDate }}
 		<div>
 			<div class="flex items-center mb-4 mt-2">
 				<Checkbox
@@ -249,11 +248,37 @@
 					v-if="!partcipantsListAlwaysOpen"
 					class="mb-4"
 				>
+					<div
+						class="flex-auto mb-4"
+						v-if="isRecurring"
+					>
+						<label
+							for="daysBeforeOpeningList"
+							class="text-slate-600 text-lg block mb-1 required"
+						>
+							Abrir em:
+						</label>
+						<Select
+							v-model="form.daysBeforeOpeningList"
+							:options="daysBeforeOpeningListDateOptions"
+							option-label="label"
+							option-value="value"
+							placeholder="Selecione"
+							:invalid="!!getError('daysBeforeOpeningList')"
+							fluid
+						/>
+						<span
+							v-if="!!getError('daysBeforeOpeningList')"
+							class="text-red-500 text-sm px-1"
+						>
+							{{ getError('daysBeforeOpeningList') }}
+						</span>
+					</div>
 					<label
 						for="openParticipantsListDate"
 						class="text-slate-600 text-lg block mb-1 required"
 					>
-						Hora/Data de abertura da lista:
+						{{ isRecurring ? 'Hora' : 'Data' }} de abertura da lista:
 					</label>
 					<DatePicker
 						id="openParticipantsListDate"
@@ -327,6 +352,7 @@ const initialValues: IEvent = {
 	openParticipantsListDate: undefined,
 	description: undefined,
 	recurringDay: undefined,
+	daysBeforeOpeningList: undefined,
 }
 
 const partcipantsListAlwaysOpen = ref<boolean>(true)
@@ -367,10 +393,6 @@ const schema = zod.object({
 		required_error: 'Horário de Término é Obrigatório',
 		invalid_type_error: 'Horário de Término é Obrigatório',
 	}),
-	// datetime: zod.date({
-	// 	required_error: 'Data é Obrigatório',
-	// 	invalid_type_error: 'Data é Obrigatório',
-	// }),
 	datetime: zod
 		.date()
 		.optional()
@@ -383,6 +405,20 @@ const schema = zod.object({
 			},
 			{
 				message: 'Data é Obrigatório',
+			}
+		),
+	recurringDay: zod
+		.string()
+		.optional()
+		.refine(
+			(value: any) => {
+				if (isRecurring.value) {
+					return zod.string().safeParse(value).success
+				}
+				return true
+			},
+			{
+				message: 'Dia da semana é Obrigatório',
 			}
 		),
 	openParticipantsListDate: zod
@@ -399,13 +435,54 @@ const schema = zod.object({
 				message: 'Hora/Data de abertura da lista é obrigatório.',
 			}
 		),
+	daysBeforeOpeningList: zod
+		.number()
+		.optional()
+		.refine(
+			(value: any) => {
+				if (!partcipantsListAlwaysOpen.value) {
+					return zod.number().safeParse(value).success
+				}
+				return true
+			},
+			{
+				message: 'Selecione quando deve abrir a lista',
+			}
+		),
 })
 
 const {validate, isValid, getError} = useValidationForm(schema, form)
 
-const {data: sports, status} = await useFetch('/api/v1/sport', {
+const {data: sportsSportions, status} = await useFetch('/api/v1/sport', {
 	lazy: true,
 })
+
+const daysBeforeOpeningListDateOptions = [
+	{
+		label: 'No dia',
+		value: 0,
+	},
+	{
+		label: '1 dia antes',
+		value: 1,
+	},
+	{
+		label: '2 dias antes',
+		value: 2,
+	},
+	{
+		label: '3 dias antes',
+		value: 3,
+	},
+	{
+		label: '4 dias antes',
+		value: 4,
+	},
+	{
+		label: '5 dias antes',
+		value: 5,
+	},
+]
 
 const daysOfWeekOptions = Object.entries(EdaysOfWeek).map(([key, value]) => ({
 	label: key,
@@ -414,13 +491,13 @@ const daysOfWeekOptions = Object.entries(EdaysOfWeek).map(([key, value]) => ({
 
 const getNextDayOfWeek = (dayOfWeek: EdaysOfWeek) => {
 	const daysOfWeekMap = {
-		Sunday: 0,
-		Monday: 1,
-		Tuesday: 2,
-		Wednesday: 3,
-		Thursday: 4,
-		Friday: 5,
-		Saturday: 6,
+		Sunday: 1,
+		Monday: 2,
+		Tuesday: 3,
+		Wednesday: 4,
+		Thursday: 5,
+		Friday: 6,
+		Saturday: 0,
 	}
 
 	const today = new Date()

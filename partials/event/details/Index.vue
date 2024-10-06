@@ -1,10 +1,9 @@
-<!-- eslint-disable vue/html-self-closing -->
 <template>
 	<div class="flex flex-col h-full">
 		<div class="w-full">
 			<img
-				class="rounded-lg h-48 w-full object-cover"
-				:src="imageSrc"
+				class="rounded-lg h-48 w-full object-cover "
+				src="~/assets/img/bask.png"
 			/>
 		</div>
 		<span class="text-3xl font-semibold mt-2 w-full mb-4">
@@ -148,7 +147,7 @@ const openModal = () => {
 	modal.value = true
 }
 
-const isRecurring = computed(() => !!event?.value.openParticipantsListDate)
+const isRecurring = computed(() => !!event?.value.recurringDay)
 </script>
 
 <style scoped></style>

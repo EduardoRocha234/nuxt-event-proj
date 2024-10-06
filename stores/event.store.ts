@@ -1,4 +1,4 @@
-export type NavBarStoreType = {
+export type EventsStoreType = {
 	filterBarVisible: boolean
 	filters: {
 		sportId?: number
@@ -14,7 +14,7 @@ export const useEventStore = defineStore('eventStore', {
 				sportId: undefined,
 				name: undefined,
 			},
-		} as NavBarStoreType),
+		} as EventsStoreType),
 	getters: {
 		sportIdFilter(): number | undefined {
 			return this.filters.sportId

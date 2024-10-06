@@ -9,7 +9,7 @@
 						<Icon
 							name="material-symbols:bookmark-outline"
 							:size="24"
-							class="text-slate-500/80"
+							class="text-slate-600/90"
 						/>
 					</button>
 					<AppButtonDropdownV1>
@@ -53,7 +53,7 @@
 		</AppHeadPage>
 		<PartialEventDetails
 			v-if="event"
-			image-src="https://portalvidalivre.com/uploads/content/image/100624/Design_sem_nome_-_2022-01-31T233027.903__1_.jpg"
+			image-src="~/assets/img/bask.png"
 			:event="event"
 			:event-participant-list="eventParticipantList"
 		/>
@@ -101,7 +101,6 @@ import type {
 const {$api, $toast, $socket} = useNuxtApp()
 const {user} = useUserStore()
 
-const navbarStore = useNavBarStore()
 const footerbarStore = useFooterBarStore()
 const route = useRoute()
 const eventId = ref<number | undefined>(Number(route.params.id))
@@ -203,7 +202,6 @@ $socket.on('removeParticipant', async (event: IRemoveParticipantWSEvent) => {
 })
 
 onMounted(() => {
-	navbarStore.setSearchBarIsVisible(false)
 	footerbarStore.setFooterBarVisible(false)
 
 	updateTimeRemaining()
