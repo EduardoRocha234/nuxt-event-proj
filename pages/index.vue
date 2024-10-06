@@ -1,8 +1,5 @@
 <template>
-	<div
-		class="grid grid-cols-1 mt-12 px-4"
-		ref="el"
-	>
+	<div class="grid grid-cols-1 mt-12 px-4">
 		<div class="flex items-center justify-between">
 			<span class="text-xl font-semibold">Próximos Eventos</span>
 			<button class="flex items-center text-sm text-slate-400">
@@ -50,12 +47,8 @@ import {useEventStore} from '~/stores/event.store'
 import {useFooterBarStore} from '~/stores/footerBar.store'
 import {useNavBarStore} from '~/stores/navBar.store'
 
-const el = ref<HTMLElement | null>(null)
-
 const {sportIdFilter, nameFilter} = storeToRefs(useEventStore())
-const {arrivedState} = useScroll(document)
 
-const navbarStore = useNavBarStore()
 const footerStore = useFooterBarStore()
 
 const params = reactive<IEventFilterParams>({
@@ -71,16 +64,6 @@ const setFilters = (event: Omit<IEventFilterParams, 'page' | 'pageSize'>) => {
 	params.sportId = event.sportId
 	params.locale = event.locale
 }
-
-watch(arrivedState, (nv) => {
-	if (
-		nv.bottom &&
-		!data.value?.metadata.isLastPage &&
-		status.value !== 'pending'
-	) {
-		params.pageSize += 5
-	}
-})
 
 watch(sportIdFilter, (nv) => {
 	params.sportId = nv
@@ -98,9 +81,21 @@ const {data, status} = await useFetch<{events: IEvent[]; metadata: MetaData}>(
 	}
 )
 
+const handleScroll = () => {
+	if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+		if (!data.value?.metadata.isLastPage && status.value !== 'pending') {
+			params.pageSize += 5
+		}
+	}
+}
+
 onMounted(() => {
-	navbarStore.setSearchBarIsVisible(true)
 	footerStore.setFooterBarVisible(true)
+	window.addEventListener('scroll', handleScroll)
+})
+
+onBeforeUnmount(() => {
+	window.removeEventListener('scroll', handleScroll)
 })
 </script>
 
