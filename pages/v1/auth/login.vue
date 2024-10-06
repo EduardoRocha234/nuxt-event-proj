@@ -111,7 +111,7 @@ const {validate, isValid, getError, errors} = useValidationForm(
 const handleSubmit = async () => {
 	await validate()
 
-	if (!isValid) return
+	if (!isValid.value) return
 
 	loading.value = true
 	const req = await $api.raw('/api/v1/auth/login', {

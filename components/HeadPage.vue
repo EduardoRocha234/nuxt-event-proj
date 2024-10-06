@@ -1,5 +1,5 @@
 <template>
-	<div class="w-full flex justify-between mt-5">
+	<div class="w-full flex justify-between mt-5 mb-5">
 		<button
 			@click="$router.back()"
 			class="h-10 w-10 border flex justify-center items-center rounded-full cursor-pointer"

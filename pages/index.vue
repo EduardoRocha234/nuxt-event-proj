@@ -1,7 +1,7 @@
 <template>
 	<div class="grid grid-cols-1 mt-12 px-4">
 		<div class="flex items-center justify-between">
-			<span class="text-xl font-semibold">Próximos Rachas</span>
+			<span class="text-xl font-semibold">Próximos Eventos</span>
 			<button class="flex items-center text-sm text-slate-400">
 				Ver Todos
 				<Icon
@@ -12,31 +12,91 @@
 			</button>
 		</div>
 		<div
-			v-if="data"
-			class="mt-5 flex flex-col gap-4 mb-4"
+			v-if="data && data.events.length > 0"
+			class="mt-5 flex flex-col gap-4 mb-8"
 		>
-			<AppCardEvent
+			<LazyAppCardEvent
 				v-for="event in data.events"
 				:key="event.id"
 				:event="event"
 			/>
 		</div>
+		<div
+			v-else
+			class="h-full py-20"
+		>
+			<LazyAppNoEventsMessage
+				description="Tente novamente mais tarde, ou escolha outras opções de filtros"
+			/>
+		</div>
+		<TransitionGroup name="fade">
+			<div
+				v-if="status === 'pending'"
+				class="flex flex-col gap-4"
+			>
+				<LazyAppCardSkeleton />
+				<LazyAppCardSkeleton />
+				<LazyAppCardSkeleton />
+			</div>
+		</TransitionGroup>
+		<LazyAppFilterEventsParametersDrawer @apply-filters="setFilters" />
 	</div>
 </template>
 
 <script setup lang="ts">
-import type {IEvent} from '~/interfaces'
+import type {IEvent, IEventFilterParams, MetaData} from '~/interfaces'
+import {useEventStore} from '~/stores/event.store'
 import {useFooterBarStore} from '~/stores/footerBar.store'
-import {useNavBarStore} from '~/stores/navBar.store'
 
-const {data} = await useFetch<{events: IEvent[]}>('/api/v1/events')
+const {sportIdFilter, nameFilter} = storeToRefs(useEventStore())
 
-const navbarStore = useNavBarStore()
 const footerStore = useFooterBarStore()
 
+const params = reactive<IEventFilterParams>({
+	page: 1,
+	pageSize: 5,
+	sportId: sportIdFilter.value,
+	name: undefined,
+})
+
+const setFilters = (event: Omit<IEventFilterParams, 'page' | 'pageSize'>) => {
+	params.initialPeriod = event.initialPeriod
+	params.finalPeriod = event.finalPeriod
+	params.sportId = event.sportId
+	params.locale = event.locale
+}
+
+watch(sportIdFilter, (nv) => {
+	params.sportId = nv
+})
+
+watch(nameFilter, (nv) => {
+	params.name = nv
+})
+
+const {data, status} = await useFetch<{events: IEvent[]; metadata: MetaData}>(
+	'/api/v1/events',
+	{
+		params: params,
+		watch: [params],
+	}
+)
+
+const handleScroll = () => {
+	if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+		if (!data.value?.metadata.isLastPage && status.value !== 'pending') {
+			params.pageSize += 5
+		}
+	}
+}
+
 onMounted(() => {
-	navbarStore.setSearchBarIsVisible(true)
 	footerStore.setFooterBarVisible(true)
+	window.addEventListener('scroll', handleScroll)
+})
+
+onBeforeUnmount(() => {
+	window.removeEventListener('scroll', handleScroll)
 })
 </script>
 

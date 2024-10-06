@@ -1,0 +1,573 @@
+<template>
+	<div class="w-full h-full px-2">
+		<div class="flex-auto mb-4">
+			<label
+				for="name"
+				class="text-slate-600 text-lg block mb-1 required"
+			>
+				Nome do Evento:
+			</label>
+			<InputText
+				v-model="form.name"
+				input-id="name"
+				:invalid="!!getError('name')"
+				fluid
+			/>
+			<span
+				v-if="!!getError('name')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('name') }}
+			</span>
+		</div>
+		<div class="flex-auto mb-4">
+			<label
+				for="location"
+				class="text-slate-600 text-lg block mb-1 required"
+			>
+				Local:
+			</label>
+			<InputText
+				v-model="form.location"
+				input-id="location"
+				fluid
+				:invalid="!!getError('location')"
+			/>
+			<span
+				v-if="!!getError('location')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('location') }}
+			</span>
+		</div>
+		<div class="flex-auto mb-4">
+			<label
+				for="location"
+				class="text-slate-600 text-lg block mb-1 required"
+			>
+				Esporte:
+			</label>
+			<Select
+				v-model="form.sportId"
+				:options="sportsSportions || []"
+				option-label="name"
+				option-value="id"
+				placeholder="Selecione"
+				:loading="status === 'pending'"
+				:invalid="!!getError('sportId')"
+				fluid
+			/>
+			<span
+				v-if="!!getError('sportId')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('sportId') }}
+			</span>
+		</div>
+		<div class="flex-auto mb-4">
+			<label
+				for="maxParticipants"
+				class="text-slate-600 text-lg block mb-1 required"
+			>
+				Número Máx. de Participantes:
+			</label>
+			<InputNumber
+				v-model="form.maxParticipants"
+				input-id="maxParticipants"
+				show-buttons
+				:min="0"
+				:use-grouping="false"
+				:invalid="!!getError('maxParticipants')"
+				fluid
+			/>
+			<span
+				v-if="!!getError('maxParticipants')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('maxParticipants') }}
+			</span>
+		</div>
+		<div class="flex-auto mb-6">
+			<label
+				for="maxOfParticipantsWaitingList"
+				class="text-slate-600 text-lg block mb-1 required"
+			>
+				Número Máx. de Suplentes:
+			</label>
+			<InputNumber
+				v-model="form.maxOfParticipantsWaitingList"
+				input-id="maxOfParticipantsWaitingList"
+				show-buttons
+				:min="0"
+				:use-grouping="false"
+				:invalid="!!getError('maxOfParticipantsWaitingList')"
+				fluid
+			/>
+			<span
+				v-if="!!getError('maxOfParticipantsWaitingList')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('maxOfParticipantsWaitingList') }}
+			</span>
+		</div>
+		<Divider />
+		<div>
+			<div class="flex items-center mb-4 mt-2">
+				<Checkbox
+					inputId="isRecurring"
+					v-model="isRecurring"
+					binary
+				/>
+				<label
+					for="isRecurring"
+					class="text-slate-600 text-lg block mb-1 ml-2"
+				>
+					Recorrente
+				</label>
+			</div>
+			<Transition
+				name="fade"
+				:duration="200"
+			>
+				<div
+					class="flex-auto mb-4"
+					v-if="isRecurring"
+				>
+					<label
+						for="recurringDay"
+						class="text-slate-600 text-lg block mb-1 required"
+					>
+						Dia da Semana:
+					</label>
+					<Select
+						v-model="form.recurringDay"
+						:options="daysOfWeekOptions"
+						option-label="label"
+						option-value="value"
+						placeholder="Selecione"
+						:loading="status === 'pending'"
+						:invalid="!!getError('recurringDay')"
+						fluid
+					/>
+					<span
+						v-if="!!getError('recurringDay')"
+						class="text-red-500 text-sm px-1"
+					>
+						{{ getError('recurringDay') }}
+					</span>
+				</div>
+				<div
+					class="mb-4"
+					v-else
+				>
+					<label
+						for="datetime"
+						class="text-slate-600 text-lg block mb-1 required"
+					>
+						Data:
+					</label>
+					<DatePicker
+						v-model="form.datetime"
+						:min-date="new Date()"
+						date-format="dd/mm/yy"
+						input-id="datetime"
+						show-icon
+						show-button-bar
+						fluid
+						icon-display="input"
+						:invalid="!!getError('datetime')"
+					/>
+					<span
+						v-if="!!getError('datetime')"
+						class="text-red-500 text-sm px-1"
+					>
+						{{ getError('datetime') }}
+					</span>
+				</div>
+			</Transition>
+		</div>
+		<div class="mb-6">
+			<label
+				for="startTime"
+				class="text-slate-600 text-lg block mb-1 required"
+			>
+				Horário de Início:
+			</label>
+			<DatePicker
+				v-model="form.startTime"
+				id="startTime"
+				time-only
+				fluid
+				:invalid="!!getError('startTime')"
+			/>
+			<span
+				v-if="!!getError('startTime')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('startTime') }}
+			</span>
+		</div>
+		<div class="mb-4">
+			<label
+				for="endTime"
+				class="text-slate-600 text-lg block mb-1 required"
+			>
+				Horário de Término:
+			</label>
+			<DatePicker
+				v-model="form.endTime"
+				id="endTime"
+				time-only
+				fluid
+				:invalid="!!getError('endTime')"
+			/>
+			<span
+				v-if="!!getError('endTime')"
+				class="text-red-500 text-sm px-1"
+			>
+				{{ getError('endTime') }}
+			</span>
+		</div>
+		<Divider />
+		<div>
+			<div class="flex items-center mb-4 mt-2">
+				<Checkbox
+					inputId="partcipantsListAlwaysOpen"
+					v-model="partcipantsListAlwaysOpen"
+					:binary="true"
+				/>
+				<label
+					for="partcipantsListAlwaysOpen"
+					class="text-slate-600 text-lg block mb-1 ml-2"
+				>
+					Lista sempre aberta
+				</label>
+			</div>
+			<Transition name="fade">
+				<div
+					v-if="!partcipantsListAlwaysOpen"
+					class="mb-4"
+				>
+					<div
+						class="flex-auto mb-4"
+						v-if="isRecurring"
+					>
+						<label
+							for="daysBeforeOpeningList"
+							class="text-slate-600 text-lg block mb-1 required"
+						>
+							Abrir em:
+						</label>
+						<Select
+							v-model="form.daysBeforeOpeningList"
+							:options="daysBeforeOpeningListDateOptions"
+							option-label="label"
+							option-value="value"
+							placeholder="Selecione"
+							:invalid="!!getError('daysBeforeOpeningList')"
+							fluid
+						/>
+						<span
+							v-if="!!getError('daysBeforeOpeningList')"
+							class="text-red-500 text-sm px-1"
+						>
+							{{ getError('daysBeforeOpeningList') }}
+						</span>
+					</div>
+					<label
+						for="openParticipantsListDate"
+						class="text-slate-600 text-lg block mb-1 required"
+					>
+						{{ isRecurring ? 'Hora' : 'Data' }} de abertura da lista:
+					</label>
+					<DatePicker
+						id="openParticipantsListDate"
+						v-model="form.openParticipantsListDate"
+						:max-date="form.datetime || new Date()"
+						:time-only="isRecurring"
+						:invalid="!!getError('openParticipantsListDate')"
+						date-format="dd/mm/yy"
+						show-time
+						fluid
+					/>
+					<span
+						v-if="!!getError('openParticipantsListDate')"
+						class="text-red-500 text-sm px-1"
+					>
+						{{ getError('openParticipantsListDate') }}
+					</span>
+				</div>
+			</Transition>
+		</div>
+		<div class="mb-4">
+			<label
+				for="openParticipantsListDate"
+				class="text-slate-600 text-lg block mb-1"
+			>
+				Descrição:
+			</label>
+			<Textarea
+				v-model="form.description"
+				autoResize
+				fluid
+				rows="5"
+				cols="30"
+				placeholder="Digite uma descrição para o evento (opcional)"
+			/>
+		</div>
+	</div>
+	<ClientOnly>
+		<Teleport to="#footer-content">
+			<AppButton
+				variant="blue"
+				@on-click="onSubmitForm"
+			>
+				{{ loading ? 'Salvando...' : 'Salvar' }}
+			</AppButton>
+		</Teleport>
+	</ClientOnly>
+</template>
+
+<script setup lang="ts">
+import {EdaysOfWeek, type IEvent} from '~/interfaces'
+import * as zod from 'zod'
+
+const {$toast, $api} = useNuxtApp()
+
+const {user} = useUserStore()
+
+const loading = ref<boolean>(false)
+
+const initialValues: IEvent = {
+	id: 0,
+	name: undefined,
+	location: undefined,
+	maxParticipants: undefined,
+	maxOfParticipantsWaitingList: undefined,
+	sportId: undefined,
+	datetime: undefined,
+	startTime: undefined,
+	endTime: undefined,
+	adminId: user?.userId,
+	openParticipantsListDate: undefined,
+	description: undefined,
+	recurringDay: undefined,
+	daysBeforeOpeningList: undefined,
+}
+
+const partcipantsListAlwaysOpen = ref<boolean>(true)
+const isRecurring = ref<boolean>(false)
+
+const form = reactive<IEvent>({
+	...initialValues,
+})
+
+const schema = zod.object({
+	name: zod
+		.string({
+			required_error: 'Nome é obrigatório',
+		})
+		.min(1, {message: 'Nome é obrigatório'}),
+	location: zod
+		.string({
+			required_error: 'Local é obrigatório',
+		})
+		.min(1, {message: 'Local é obrigatório'}),
+	maxParticipants: zod.number({
+		required_error: 'Número Máx. de Participantes: é obrigatório',
+		invalid_type_error: 'Número Máx. de Participantes: é obrigatório',
+	}),
+	maxOfParticipantsWaitingList: zod.number({
+		required_error: 'Número Máx. de Suplentes: é obrigatório',
+		invalid_type_error: 'Número Máx. de Suplentes: é obrigatório',
+	}),
+	sportId: zod.number({
+		required_error: 'Esporte é Obrigatório',
+		invalid_type_error: 'Esporte é Obrigatório',
+	}),
+	startTime: zod.date({
+		required_error: 'Horário de Início é Obrigatório',
+		invalid_type_error: 'Horário de Início é Obrigatório',
+	}),
+	endTime: zod.date({
+		required_error: 'Horário de Término é Obrigatório',
+		invalid_type_error: 'Horário de Término é Obrigatório',
+	}),
+	datetime: zod
+		.date()
+		.optional()
+		.refine(
+			(value: any) => {
+				if (!isRecurring.value) {
+					return zod.date().safeParse(value).success
+				}
+				return true
+			},
+			{
+				message: 'Data é Obrigatório',
+			}
+		),
+	recurringDay: zod
+		.string()
+		.optional()
+		.refine(
+			(value: any) => {
+				if (isRecurring.value) {
+					return zod.string().safeParse(value).success
+				}
+				return true
+			},
+			{
+				message: 'Dia da semana é Obrigatório',
+			}
+		),
+	openParticipantsListDate: zod
+		.date()
+		.optional()
+		.refine(
+			(value: any) => {
+				if (!partcipantsListAlwaysOpen.value) {
+					return zod.date().safeParse(value).success
+				}
+				return true
+			},
+			{
+				message: 'Hora/Data de abertura da lista é obrigatório.',
+			}
+		),
+	daysBeforeOpeningList: zod
+		.number()
+		.optional()
+		.refine(
+			(value: any) => {
+				if (!partcipantsListAlwaysOpen.value) {
+					return zod.number().safeParse(value).success
+				}
+				return true
+			},
+			{
+				message: 'Selecione quando deve abrir a lista',
+			}
+		),
+})
+
+const {validate, isValid, getError} = useValidationForm(schema, form)
+
+const {data: sportsSportions, status} = await useFetch('/api/v1/sport', {
+	lazy: true,
+})
+
+const daysBeforeOpeningListDateOptions = [
+	{
+		label: 'No dia',
+		value: 0,
+	},
+	{
+		label: '1 dia antes',
+		value: 1,
+	},
+	{
+		label: '2 dias antes',
+		value: 2,
+	},
+	{
+		label: '3 dias antes',
+		value: 3,
+	},
+	{
+		label: '4 dias antes',
+		value: 4,
+	},
+	{
+		label: '5 dias antes',
+		value: 5,
+	},
+]
+
+const daysOfWeekOptions = Object.entries(EdaysOfWeek).map(([key, value]) => ({
+	label: key,
+	value,
+}))
+
+const getNextDayOfWeek = (dayOfWeek: EdaysOfWeek) => {
+	const daysOfWeekMap = {
+		Sunday: 1,
+		Monday: 2,
+		Tuesday: 3,
+		Wednesday: 4,
+		Thursday: 5,
+		Friday: 6,
+		Saturday: 0,
+	}
+
+	const today = new Date()
+	const todayDay = today.getDay()
+	const targetDay = daysOfWeekMap[dayOfWeek]
+
+	// Se o dia atual já for o dia selecionado, define para a próxima semana
+	let daysUntilNextTarget = targetDay - todayDay
+	if (daysUntilNextTarget <= 0) {
+		daysUntilNextTarget += 6
+	}
+
+	const nextTargetDate = new Date(today)
+	nextTargetDate.setDate(today.getDate() + daysUntilNextTarget)
+
+	return nextTargetDate.toISOString()
+}
+
+watch(
+	() => form.recurringDay,
+	(nv) => {
+		if (nv) {
+			form.openParticipantsListDate = new Date(getNextDayOfWeek(nv))
+		}
+	}
+)
+
+const onSubmitForm = async () => {
+	await validate()
+
+	if (!isValid.value) return
+
+	if (partcipantsListAlwaysOpen.value) form.openParticipantsListDate = undefined
+
+	if (isRecurring.value) {
+		form.datetime = getNextDayOfWeek(form.recurringDay!)
+	}
+
+	try {
+		loading.value = true
+		const response = await $api.raw('/api/v1/events', {
+			method: 'POST',
+			body: form,
+		})
+
+		if (response.status !== 200) {
+			throw new Error('Ocorreu um erro ao criar o evento')
+		}
+
+		$toast.success('Evento criado com sucesso!')
+
+		const {id} = response._data!
+
+		await navigateTo(`/v1/event/details/${id}`)
+	} catch (error) {
+		$toast.error(error ?? 'Ocorreu um erro ao criar o evento')
+	} finally {
+		loading.value = false
+	}
+}
+</script>
+
+<style scoped>
+label.required {
+	position: relative;
+}
+
+label.required::after {
+	content: '*';
+	position: absolute;
+	color: #e53e3e;
+}
+</style>
