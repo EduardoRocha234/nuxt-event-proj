@@ -19,21 +19,43 @@
 			</template>
 		</SpeedDial>
 		<div class="relative flex justify-between px-10 w-full h-full">
-			<div class="flex flex-col items-center justify-center text-blue-600">
+			<NuxtLink
+				class="flex flex-col items-center justify-center text-blue-600"
+				to="/"
+			>
 				<Icon
 					name="material-symbols:explore"
 					:size="25"
 					class=""
 				/>
-				<span class="text-sm"> Explorar </span>
-			</div>
-			<div class="flex flex-col items-center justify-center text-blue-600">
+				<span
+					class="text-sm"
+					:class="{
+						'border-b-2 border-blue-600 ease-in-out duration-100':
+							route.path === '/',
+					}"
+				>
+					Explorar
+				</span>
+			</NuxtLink>
+			<NuxtLink
+				class="flex flex-col items-center justify-center text-blue-600"
+				to="/v1/user/profile"
+			>
 				<Icon
-					name="fluent:person-48-filled"
+					name="mingcute:user-follow-2-fill"
 					:size="25"
 				/>
-				<span class="text-sm"> Perfil </span>
-			</div>
+				<span
+					class="text-sm"
+					:class="{
+						'border-b-2 border-blue-600 ease-in-out duration-100':
+							route.path.includes('profile'),
+					}"
+				>
+					Inscrições
+				</span>
+			</NuxtLink>
 		</div>
 	</footer>
 </template>
@@ -42,6 +64,7 @@
 import {useFooterBarStore} from '~/stores/footerBar.store'
 
 const footerBarStore = useFooterBarStore()
+const route = useRoute()
 
 const items = ref<{label: string; command: () => void}[]>([
 	{

@@ -2,12 +2,13 @@
 	<header
 		ref="header"
 		id="header"
-		class="px-5 relative flex flex-col font-medium justify-between text-lg transition-all ease-in-out duration-300 bg-blue-500"
+		class="px-5 flex flex-col font-medium justify-between text-lg transition-all ease-in-out duration-300 bg-blue-500"
 		:class="{
-			'rounded-b-[3rem]': navbarStore.searchBarIsVisible,
-			'py-9': navbarStore.searchBarIsVisible,
-			'py-4': !navbarStore.searchBarIsVisible,
-			'shadow-md': !navbarStore.searchBarIsVisible,
+			'py-9 rounded-b-[3rem]': isHomePage && !floatingBar,
+			'py-2 shadow-md': !isHomePage,
+			'py-4': isHomePage && floatingBar,
+			'relative ': !floatingBar,
+			'fixed top-0 z-50 w-full opacity-85': floatingBar,
 		}"
 	>
 		<nav
@@ -32,7 +33,7 @@
 		</nav>
 		<div
 			class="flex justify-between items-center mt-5 mb-3"
-			v-if="navbarStore.searchBarIsVisible"
+			v-if="isHomePage && !floatingBar"
 		>
 			<div class="flex gap-2">
 				<Icon
@@ -63,7 +64,7 @@
 		</div>
 		<div
 			class="absolute -bottom-4 flex gap-2"
-			v-if="navbarStore.searchBarIsVisible"
+			v-if="isHomePage && !floatingBar"
 		>
 			<template v-if="status === 'pending'">
 				<Skeleton
@@ -123,8 +124,10 @@
 import {useEventStore} from '~/stores/event.store'
 import {useNavBarStore} from '~/stores/navBar.store'
 
-const navbarStore = useNavBarStore()
 const eventStore = useEventStore()
+const route = useRoute()
+
+const {y} = useScroll(window)
 
 const sideBarVisible = defineModel<boolean>('sidebarVisible', {default: false})
 
@@ -133,6 +136,12 @@ const {sportIdFilter, filterBarIsVisible} = storeToRefs(useEventStore())
 const {data: sports, status} = await useFetch('/api/v1/sport', {
 	lazy: true,
 })
+
+const isHomePage = computed(() => route.path === '/')
+
+const floatingBar = computed(
+	() => Math.round(y.value) > 120 && isHomePage.value
+)
 
 const pesquisar = useDebounceFn((value) => eventStore.setNameFilter(value), 700)
 </script>

@@ -41,6 +41,63 @@
 							</button>
 						</span>
 					</div>
+					<div class="overflow-y-auto py-10">
+						<ul>
+							<li>
+								<a
+									v-ripple
+									class="flex gap-3 items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100"
+								>
+									<Icon
+										name="mi:user"
+										size="20"
+									/>
+									<span class="font-medium text-lg">Meu Perfil</span>
+								</a>
+							</li>
+							<li>
+								<a
+									v-ripple
+									class="flex gap-3 items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100"
+								>
+									<Icon
+										name="mdi:bookmark-outline"
+										size="23"
+									/>
+									<span class="font-medium text-lg">Salvos</span>
+									<!-- <span
+										class="inline-flex items-center justify-center ml-auto bg-primary text-primary-contrast rounded-full"
+										style="min-width: 1.5rem; height: 1.5rem"
+										>3</span
+									> -->
+								</a>
+							</li>
+							<li>
+								<a
+									v-ripple
+									class="flex gap-3 items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100"
+								>
+									<Icon
+										name="proicons:calendar"
+										size="23"
+									/>
+									<span class="font-medium text-lg">Calendário</span>
+								</a>
+							</li>
+							<li>
+								<a
+									v-ripple
+									class="flex gap-3 items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100"
+								>
+									<Icon
+										name="mdi:sign-out"
+										size="23"
+									/>
+									<span class="font-medium text-lg">Sair</span>
+								</a>
+							</li>
+						</ul>
+					</div>
 					<!-- <div class="overflow-y-auto">
 						<ul class="list-none p-4 m-0">
 							<li>
@@ -62,7 +119,7 @@
 									<li>
 										<a
 											v-ripple
-											class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
+											class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 "
 										>
 											<i class="pi pi-home mr-2"></i>
 											<span class="font-medium">Dashboard</span>
@@ -71,7 +128,7 @@
 									<li>
 										<a
 											v-ripple
-											class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
+											class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 "
 										>
 											<i class="pi pi-bookmark mr-2"></i>
 											<span class="font-medium">Bookmarks</span>
