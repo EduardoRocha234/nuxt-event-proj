@@ -13,12 +13,12 @@
 			/>
 		</div>
 		<span class="font-bold text-2xl">Não há eventos futuros</span>
-		<span class="text-center font- text-slate-500"
-			>Tente novamente mais tarde, ou escolha outras opções de filtros</span
-		>
+		<span class="text-center font- text-slate-500">{{ description }}</span>
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineProps<{description: string}>()
+</script>
 
 <style scoped></style>

@@ -3,7 +3,7 @@ import {IEvent, MetaData, PaginationParams} from '~/interfaces'
 export default defineEventHandler(async (event) => {
 	const {API_BASE_URL} = useRuntimeConfig(event).public
 	const token = getCookie(event, 'token')
-	const params = new URLSearchParams(getQuery(event)).toString()
+	const userId = getRouterParam(event, 'userId')
 
 	if (!token) {
 		throw createError({
@@ -13,14 +13,15 @@ export default defineEventHandler(async (event) => {
 	}
 
 	try {
-		const res = await fetch(`${API_BASE_URL}/event?${params}`, {
+		const res = await fetch(`${API_BASE_URL}/events-by-user/${userId}`, {
 			headers: {Authorization: `Bearer ${token}`},
 		})
+
 
 		if (res.status !== 200) {
 			throw createError({
 				status: res.status,
-				message: 'Erro ao buscar os eventos',
+				message: 'Erro ao buscar os eventos por usuário',
 			})
 		}
 
@@ -28,7 +29,7 @@ export default defineEventHandler(async (event) => {
 	} catch (err) {
 		throw createError({
 			status: 500,
-			message: 'Erro ao buscar os eventos',
+			message: 'Erro ao buscar os eventos por usuário',
 		})
 	}
 })
