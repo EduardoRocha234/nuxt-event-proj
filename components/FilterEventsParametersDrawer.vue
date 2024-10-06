@@ -247,10 +247,10 @@ const selectPeriodo = (period: 'today' | 'tomorrow' | 'thisWeek') => {
 	}
 
 	if (period === 'tomorrow') {
-		const tomorrow = dayjs().add(1, 'day').startOf('day').format()
+		const faterTomorrowDay = dayjs().add(2, 'day').startOf('day').format()
 
-		filterParams.initialPeriod = new Date(tomorrow).toISOString()
-		filterParams.finalPeriod = new Date(tomorrow).toISOString()
+		filterParams.initialPeriod = new Date().toISOString()
+		filterParams.finalPeriod = new Date(faterTomorrowDay).toISOString()
 		return
 	}
 
