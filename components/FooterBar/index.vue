@@ -40,7 +40,7 @@
 			</NuxtLink>
 			<NuxtLink
 				class="flex flex-col items-center justify-center text-blue-600"
-				to="/v1/user/profile"
+				to="/v1/user/events-joined"
 			>
 				<Icon
 					name="mingcute:user-follow-2-fill"
@@ -50,7 +50,7 @@
 					class="text-sm"
 					:class="{
 						'border-b-2 border-blue-600 ease-in-out duration-100':
-							route.path.includes('profile'),
+							route.path.includes('events-joined'),
 					}"
 				>
 					Inscrições

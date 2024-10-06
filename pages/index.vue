@@ -25,7 +25,9 @@
 			v-else
 			class="h-full py-20"
 		>
-			<LazyAppNoEventsMessage />
+			<LazyAppNoEventsMessage
+				description="Tente novamente mais tarde, ou escolha outras opções de filtros"
+			/>
 		</div>
 		<TransitionGroup name="fade">
 			<div
@@ -45,7 +47,6 @@
 import type {IEvent, IEventFilterParams, MetaData} from '~/interfaces'
 import {useEventStore} from '~/stores/event.store'
 import {useFooterBarStore} from '~/stores/footerBar.store'
-import {useNavBarStore} from '~/stores/navBar.store'
 
 const {sportIdFilter, nameFilter} = storeToRefs(useEventStore())
 

@@ -13,6 +13,13 @@ export const useUserStore = defineStore('userStore', {
 		setUser(user: IUser) {
 			this.user = user
 		},
+		async signOut() {
+			const token = useCookie('token')
+			token.value = null
+			await navigateTo('/v1/auth/login', {
+				replace: true,
+			})
+		},
 	},
 	persist: true,
 })
