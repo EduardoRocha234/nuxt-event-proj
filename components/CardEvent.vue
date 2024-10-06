@@ -11,7 +11,7 @@
 				><span class="-mt-2 font-semibold text-blue-400">JUL</span>
 			</div> -->
 			<img
-				src="https://portalvidalivre.com/uploads/content/image/100624/Design_sem_nome_-_2022-01-31T233027.903__1_.jpg"
+				src="~/assets/img/bask.png"
 				class="w-full object-cover h-36 rounded-xl"
 			/>
 		</div>
