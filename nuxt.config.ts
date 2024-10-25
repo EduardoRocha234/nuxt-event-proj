@@ -1,4 +1,7 @@
 import Lara from '@primevue/themes/lara'
+
+const sw = process.env.SW === 'true'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	compatibilityDate: '2024-04-03',
@@ -7,7 +10,7 @@ export default defineNuxtConfig({
 	sourcemap: true,
 	serverDir: 'server',
 	app: {
-		baseURL: '/app',
+		baseURL: '/app/',
 		head: {
 			htmlAttrs: {
 				lang: 'pt-br',
@@ -55,8 +58,14 @@ export default defineNuxtConfig({
 		'@vite-pwa/nuxt',
 	],
 	pwa: {
+		scope: '/app',
+		strategies: sw ? 'injectManifest' : 'generateSW',
+		srcDir: sw ? 'service-worker' : undefined,
+		filename: sw ? 'sw.ts' : undefined,
+		registerType: 'autoUpdate',
 		manifest: {
-			publicPath: '/app/public',
+			scope: '/app',
+			// publicPath: '/app/public',
 			name: 'PgConnect',
 			short_name: 'PgConnect',
 			theme_color: '#ffffff',
@@ -121,12 +130,12 @@ export default defineNuxtConfig({
 			// offline: true,
 			runtimeCaching: [
 				{
-					urlPattern: '/*',
+					urlPattern: '/app/*',
 					handler: 'NetworkFirst',
 				},
 			],
-			globPatterns: ['**/*.{ts,css,html,png,svg,ico}'],
-			navigateFallback: '/app',
+			globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+			// navigateFallback: '/app',
 		},
 		devOptions: {
 			enabled: true,
@@ -208,6 +217,19 @@ export default defineNuxtConfig({
 			},
 		},
 	},
+	// vite: {
+	// 	build: {
+	// 		rollupOptions: {
+	// 			input: ['/app/firebase-messaging-sw.js'],
+	// 			output: {
+	// 				entryFileNames: '[name].js',
+	// 			},
+	// 		},
+	// 	},
+	// },
+	build: {
+		transpile: ['vue-toastification'],
+	},
 	dayjs: {
 		locales: ['pt', 'br'],
 		plugins: ['relativeTime', 'utc', 'timezone'],
@@ -225,4 +247,7 @@ export default defineNuxtConfig({
 		autoImports: true,
 	},
 	css: ['~/assets/css/globals.css'],
+	experimental: {
+		externalVue: false,
+	}
 })

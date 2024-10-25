@@ -100,8 +100,13 @@ const setToken = async () => {
 	console.log('Teste')
 	// importar firebase/messaging
 
+	const serviceWorkerRegistration = await navigator.serviceWorker.register(
+		'/app/firebase-messaging-sw.js'
+	)
+
 	const {$messaging} = useNuxtApp()
 	const token = await getToken($messaging, {
+		serviceWorkerRegistration,
 		vapidKey:
 			'BCC-FLq6N1XXt4YejT4wT4q3JvVqfLRZ-kk0pcrltQnxh_wHPXacI9c6k1883jm5wf2y81ZIRiiDuIRFpK1vYw8',
 	})
@@ -138,6 +143,7 @@ const requestPermission = async () => {
 onMounted(async () => {
 	footerStore.setFooterBarVisible(true)
 	window.addEventListener('scroll', handleScroll)
+
 	await requestPermission()
 })
 

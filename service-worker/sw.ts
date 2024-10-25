@@ -19,7 +19,7 @@ let allowlist: undefined | RegExp[]
 
 if (import.meta.env.DEV) allowlist = [/^\/$/]
 
-registerRoute(new NavigationRoute(createHandlerBoundToURL('/'), {allowlist}))
+registerRoute(new NavigationRoute(createHandlerBoundToURL('/app'), {allowlist}))
 
 // self.addEventListener('push', (event) => {
 // 	const data = event?.data?.json()
