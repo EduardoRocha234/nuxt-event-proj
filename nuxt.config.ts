@@ -52,6 +52,7 @@ export default defineNuxtConfig({
 		'@nuxt/eslint',
 		'dayjs-nuxt',
 		'@primevue/nuxt-module',
+		'@vite-pwa/nuxt',
 	],
 	pwa: {
 		manifest: {
@@ -111,7 +112,6 @@ export default defineNuxtConfig({
 		},
 		injectManifest: {
 			globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
-
 		},
 		client: {
 			installPrompt: true,
