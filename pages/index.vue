@@ -11,6 +11,8 @@
 				/>
 			</button>
 		</div>
+		{{ ole }}
+		<button @click="requestPermission">Allow Notifications</button>
 		<div
 			v-if="data && data.events.length > 0"
 			class="mt-5 flex flex-col gap-4 mb-8"
@@ -44,11 +46,13 @@
 </template>
 
 <script setup lang="ts">
+import {getToken} from 'firebase/messaging'
 import type {IEvent, IEventFilterParams, MetaData} from '~/interfaces'
 import {useEventStore} from '~/stores/event.store'
 import {useFooterBarStore} from '~/stores/footerBar.store'
 
 const {sportIdFilter, nameFilter} = storeToRefs(useEventStore())
+const {user} = useUserStore()
 
 const footerStore = useFooterBarStore()
 
@@ -74,6 +78,8 @@ watch(nameFilter, (nv) => {
 	params.name = nv
 })
 
+const ole = ref()
+
 const {data, status} = await useFetch<{events: IEvent[]; metadata: MetaData}>(
 	'/api/v1/events',
 	{
@@ -90,9 +96,49 @@ const handleScroll = () => {
 	}
 }
 
-onMounted(() => {
+const setToken = async () => {
+	console.log('Teste')
+	// importar firebase/messaging
+
+	const {$messaging} = useNuxtApp()
+	const token = await getToken($messaging, {
+		vapidKey:
+			'BCC-FLq6N1XXt4YejT4wT4q3JvVqfLRZ-kk0pcrltQnxh_wHPXacI9c6k1883jm5wf2y81ZIRiiDuIRFpK1vYw8',
+	})
+	ole.value = token
+	console.log(token)
+	console.log('asdad')
+
+	// mandar token e user id par o servidor
+	await $fetch.raw('/api/v1/notifications/set-user-token', {
+		method: 'POST',
+		body: {
+			token,
+			userId: user?.userId,
+		},
+		ignoreResponseError: true,
+		retry: false,
+	})
+}
+
+const requestPermission = async () => {
+	if (!window.Notification) return
+
+	if (window.Notification.permission === 'granted') {
+		setToken()
+	} else {
+		window.Notification.requestPermission((value) => {
+			if (value === 'granted') {
+				setToken()
+			}
+		})
+	}
+}
+
+onMounted(async () => {
 	footerStore.setFooterBarVisible(true)
 	window.addEventListener('scroll', handleScroll)
+	await requestPermission()
 })
 
 onBeforeUnmount(() => {

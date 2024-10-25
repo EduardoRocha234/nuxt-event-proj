@@ -53,6 +53,89 @@ export default defineNuxtConfig({
 		'dayjs-nuxt',
 		'@primevue/nuxt-module',
 	],
+	pwa: {
+		manifest: {
+			publicPath: '/app/public',
+			name: 'PgConnect',
+			short_name: 'PgConnect',
+			theme_color: '#ffffff',
+			start_url: '/app',
+			lang: 'pt-br',
+			description: 'descrição do seu APP',
+			screenshots: [
+				{
+					src: 'app/manifest/android-launchericon-192-192.png',
+					sizes: '192x192',
+					type: 'image/png',
+					form_factor: 'wide',
+					label: 'RachaConnect',
+				},
+			],
+			icons: [
+				{
+					src: 'app/manifest/android-launchericon-48-48.png',
+					sizes: '48x48',
+					type: 'image/png',
+				},
+				{
+					src: 'app/manifest/android-launchericon-72-72.png',
+					sizes: '72x72',
+					type: 'image/png',
+				},
+				{
+					src: 'app/manifest/android-launchericon-96-96.png',
+					sizes: '96x96',
+					type: 'image/png',
+				},
+				{
+					src: 'app/manifest/android-launchericon-144-144.png',
+					sizes: '144x144',
+					type: 'image/png',
+				},
+				{
+					src: 'app/manifest/android-launchericon-192-192.png',
+					sizes: '192x192',
+					type: 'image/png',
+				},
+				{
+					src: 'app/manifest/android-launchericon-512-512.png',
+					sizes: '512x512',
+					type: 'image/png',
+				},
+				// {
+				// 	src: 'manifest/android-chrome-512x512.png',
+				// 	sizes: '512x512',
+				// 	type: 'image/png',
+				// },
+			],
+		},
+		injectManifest: {
+			globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+
+		},
+		client: {
+			installPrompt: true,
+			periodicSyncForUpdates: 20,
+		},
+		workbox: {
+			// offline: true,
+			runtimeCaching: [
+				{
+					urlPattern: '/*',
+					handler: 'NetworkFirst',
+				},
+			],
+			globPatterns: ['**/*.{ts,css,html,png,svg,ico}'],
+			navigateFallback: '/app',
+		},
+		devOptions: {
+			enabled: true,
+			suppressWarnings: true,
+			navigateFallback: '/app',
+			navigateFallbackAllowlist: [/^\/$/],
+			type: 'module',
+		},
+	},
 	primevue: {
 		options: {
 			theme: {
