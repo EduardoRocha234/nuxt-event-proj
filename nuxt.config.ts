@@ -10,7 +10,7 @@ export default defineNuxtConfig({
 	sourcemap: true,
 	serverDir: 'server',
 	app: {
-		baseURL: '/app/',
+		// baseURL: '/app',
 		head: {
 			htmlAttrs: {
 				lang: 'pt-br',
@@ -58,23 +58,23 @@ export default defineNuxtConfig({
 		'@vite-pwa/nuxt',
 	],
 	pwa: {
-		scope: '/app',
+		// scope: '/app',
 		strategies: sw ? 'injectManifest' : 'generateSW',
 		srcDir: sw ? 'service-worker' : undefined,
 		filename: sw ? 'sw.ts' : undefined,
 		registerType: 'autoUpdate',
 		manifest: {
-			scope: '/app',
+			// scope: '/app',
 			// publicPath: '/app/public',
 			name: 'PgConnect',
 			short_name: 'PgConnect',
 			theme_color: '#ffffff',
-			start_url: '/app',
+			// start_url: '/app',
 			lang: 'pt-br',
 			description: 'descrição do seu APP',
 			screenshots: [
 				{
-					src: 'app/manifest/android-launchericon-192-192.png',
+					src: 'manifest/android-launchericon-192-192.png',
 					sizes: '192x192',
 					type: 'image/png',
 					form_factor: 'wide',
@@ -83,32 +83,32 @@ export default defineNuxtConfig({
 			],
 			icons: [
 				{
-					src: 'app/manifest/android-launchericon-48-48.png',
+					src: 'manifest/android-launchericon-48-48.png',
 					sizes: '48x48',
 					type: 'image/png',
 				},
 				{
-					src: 'app/manifest/android-launchericon-72-72.png',
+					src: 'manifest/android-launchericon-72-72.png',
 					sizes: '72x72',
 					type: 'image/png',
 				},
 				{
-					src: 'app/manifest/android-launchericon-96-96.png',
+					src: 'manifest/android-launchericon-96-96.png',
 					sizes: '96x96',
 					type: 'image/png',
 				},
 				{
-					src: 'app/manifest/android-launchericon-144-144.png',
+					src: 'manifest/android-launchericon-144-144.png',
 					sizes: '144x144',
 					type: 'image/png',
 				},
 				{
-					src: 'app/manifest/android-launchericon-192-192.png',
+					src: 'manifest/android-launchericon-192-192.png',
 					sizes: '192x192',
 					type: 'image/png',
 				},
 				{
-					src: 'app/manifest/android-launchericon-512-512.png',
+					src: 'manifest/android-launchericon-512-512.png',
 					sizes: '512x512',
 					type: 'image/png',
 				},
@@ -130,7 +130,7 @@ export default defineNuxtConfig({
 			// offline: true,
 			runtimeCaching: [
 				{
-					urlPattern: '/app/*',
+					urlPattern: '/*',
 					handler: 'NetworkFirst',
 				},
 			],
@@ -140,7 +140,7 @@ export default defineNuxtConfig({
 		devOptions: {
 			enabled: true,
 			suppressWarnings: true,
-			navigateFallback: '/app',
+			navigateFallback: '/',
 			navigateFallbackAllowlist: [/^\/$/],
 			type: 'module',
 		},
@@ -217,16 +217,9 @@ export default defineNuxtConfig({
 			},
 		},
 	},
-	// vite: {
-	// 	build: {
-	// 		rollupOptions: {
-	// 			input: ['/app/firebase-messaging-sw.js'],
-	// 			output: {
-	// 				entryFileNames: '[name].js',
-	// 			},
-	// 		},
-	// 	},
-	// },
+	vite: {
+		base: './',
+	},
 	build: {
 		transpile: ['vue-toastification'],
 	},
@@ -249,5 +242,5 @@ export default defineNuxtConfig({
 	css: ['~/assets/css/globals.css'],
 	experimental: {
 		externalVue: false,
-	}
+	},
 })

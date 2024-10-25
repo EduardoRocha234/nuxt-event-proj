@@ -103,7 +103,7 @@
 							class="m-4 flex items-center cursor-pointer p-4 gap-2 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
 						>
 							<Avatar
-								image="/app/blank-profile.webp"
+								image="/blank-profile.webp"
 								shape="circle"
 							/>
 							<div class="flex flex-col">

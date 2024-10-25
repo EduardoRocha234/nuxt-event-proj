@@ -9,6 +9,6 @@ export default defineEventHandler(async (event) => {
 	}
 
 	if (!token) {
-		return await sendRedirect(event, '/app/v1/auth/login')
+		return await sendRedirect(event, '/v1/auth/login')
 	}
 })
