@@ -139,24 +139,6 @@ const handleSubmit = async () => {
 
 	$toast.error('Ocorreu um erro ao tentar fazer o login')
 }
-
-const requestPermission = async () => {
-	if (!window.Notification) return
-
-	if (window.Notification.permission === 'granted') {
-		console.log('Permission')
-	} else {
-		window.Notification.requestPermission((value) => {
-			if (value === 'granted') {
-				console.log('Permission')
-			}
-		})
-	}
-}
-
-onMounted(async () => {
-	await requestPermission()
-})
 </script>
 
 <style scoped></style>

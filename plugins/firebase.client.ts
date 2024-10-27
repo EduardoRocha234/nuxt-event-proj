@@ -1,5 +1,6 @@
 import {initializeApp, getApps} from 'firebase/app'
-import {getMessaging, type Messaging} from 'firebase/messaging/sw'
+// import { onMessage } from 'firebase/messaging'
+import {getMessaging, type Messaging, onMessage} from 'firebase/messaging'
 
 declare module '#app' {
 	interface NuxtApp {
@@ -31,9 +32,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 	// this runs whenever a message is received:
 	// - When the page os open
 	// - When the user cliled the bg notification
-	// onMessage(messaging, (payload) => {
-	// 	alert(JSON.stringify(payload, null, 2))
-	// })
+	onMessage(messaging, (payload) => {
+		alert(JSON.stringify(payload, null, 2))
+	})
 	return {
 		provide: {
 			messaging,
