@@ -336,6 +336,8 @@ const {$toast, $api} = useNuxtApp()
 
 const {user} = useUserStore()
 
+const dayjs = useDayjs()
+
 const loading = ref<boolean>(false)
 
 const initialValues: IEvent = {
@@ -491,39 +493,27 @@ const daysOfWeekOptions = Object.entries(EdaysOfWeek).map(([key, value]) => ({
 
 const getNextDayOfWeek = (dayOfWeek: EdaysOfWeek) => {
 	const daysOfWeekMap = {
-		Sunday: 1,
-		Monday: 2,
-		Tuesday: 3,
-		Wednesday: 4,
-		Thursday: 5,
-		Friday: 6,
-		Saturday: 0,
+		Sunday: 0,
+		Monday: 1,
+		Tuesday: 2,
+		Wednesday: 3,
+		Thursday: 4,
+		Friday: 5,
+		Saturday: 6,
 	}
 
-	const today = new Date()
-	const todayDay = today.getDay()
+	const today = dayjs()
+	const todayDay = today.day()
 	const targetDay = daysOfWeekMap[dayOfWeek]
 
-	// Se o dia atual já for o dia selecionado, define para a próxima semana
 	let daysUntilNextTarget = targetDay - todayDay
 	if (daysUntilNextTarget <= 0) {
-		daysUntilNextTarget += 6
+		daysUntilNextTarget += 7
 	}
 
-	const nextTargetDate = new Date(today)
-	nextTargetDate.setDate(today.getDate() + daysUntilNextTarget)
-
-	return nextTargetDate.toISOString()
+	const nextTargetDate = today.add(daysUntilNextTarget, 'day')
+	return dayjs(nextTargetDate.format('YYYY-MM-DD')).toDate()
 }
-
-watch(
-	() => form.recurringDay,
-	(nv) => {
-		if (nv) {
-			form.openParticipantsListDate = new Date(getNextDayOfWeek(nv))
-		}
-	}
-)
 
 const onSubmitForm = async () => {
 	await validate()
@@ -533,7 +523,9 @@ const onSubmitForm = async () => {
 	if (partcipantsListAlwaysOpen.value) form.openParticipantsListDate = undefined
 
 	if (isRecurring.value) {
-		form.datetime = getNextDayOfWeek(form.recurringDay!)
+		const nextDay = getNextDayOfWeek(form.recurringDay!)
+		form.datetime = nextDay
+		form.openParticipantsListDate = nextDay
 	}
 
 	try {
@@ -543,7 +535,7 @@ const onSubmitForm = async () => {
 			body: form,
 		})
 
-		if (response.status !== 200) {
+		if (response.status !== 201) {
 			throw new Error('Ocorreu um erro ao criar o evento')
 		}
 

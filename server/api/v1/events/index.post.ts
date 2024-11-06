@@ -21,7 +21,6 @@ export default defineEventHandler(async (event) => {
 			},
 			body: JSON.stringify(body),
 		})
-		console.log(res)
 
 		if (res.status !== 201) {
 			throw createError({
@@ -30,6 +29,7 @@ export default defineEventHandler(async (event) => {
 			})
 		}
 
+		setResponseStatus(event, 201, 'Evento Criado com Sucesso')
 		return (await res.json()) as IEvent
 	} catch (err) {
 		console.log(err)

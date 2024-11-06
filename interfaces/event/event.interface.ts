@@ -16,11 +16,11 @@ export interface IEvent {
 	name?: string
 	sportId?: number
 	maxParticipants?: number
-	createdAt?: string
+	createdAt?: Date
 	location?: string
-	datetime?: string
-	startTime?: string
-	endTime?: string
+	datetime?: Date
+	startTime?: Date
+	endTime?: Date
 	openParticipantsListDate?: Date
 	maxOfParticipantsWaitingList?: number
 	adminId?: string
