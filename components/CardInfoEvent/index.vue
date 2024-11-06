@@ -47,7 +47,7 @@
 					<span class="font-semibold">Lista de Participantes</span>
 				</div>
 				<div class="flex">
-					{{ event?.participants.length }}/{{ event?.maxParticipants }}
+					{{ event?.participants?.length }}/{{ event?.maxParticipants }}
 				</div>
 			</div>
 			<div class="mt-2 relative h-80 rounded-xl px-5 pt-4 pb-9 bg-slate-100">
@@ -86,11 +86,11 @@
 						<div
 							class="px-2 py-1 w-full h-full bg-green-300 rounded-full text-xs"
 						>
-							{{ participantsConfirmed.length }}
+							{{ participantsConfirmed?.length }}
 						</div>
 						<div
 							class="px-2 py-1 w-full h-full bg-orange-300 rounded-full text-xs"
-							v-if="participantsWaitingList.length"
+							v-if="participantsWaitingList?.length"
 						>
 							{{ participantsWaitingList.length }}
 						</div>
@@ -154,10 +154,10 @@ const startAndEndTimeFormat = computed(
 		).format('HH:mm A')}`
 )
 const participantsConfirmed = computed(() =>
-	event.value.participants.filter((p) => p.status === 'confirmed')
+	event.value.participants?.filter((p) => p.status === 'confirmed')
 )
 const participantsWaitingList = computed(() =>
-	event.value.participants.filter((p) => p.status === 'waiting_list')
+	event.value.participants?.filter((p) => p.status === 'waiting_list')
 )
 </script>
 

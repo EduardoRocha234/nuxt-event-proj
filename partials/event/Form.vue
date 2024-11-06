@@ -339,6 +339,8 @@ const {user} = useUserStore()
 const dayjs = useDayjs()
 
 const loading = ref<boolean>(false)
+const partcipantsListAlwaysOpen = ref<boolean>(true)
+const isRecurring = ref<boolean>(false)
 
 const initialValues: IEvent = {
 	id: 0,
@@ -356,9 +358,6 @@ const initialValues: IEvent = {
 	recurringDay: undefined,
 	daysBeforeOpeningList: undefined,
 }
-
-const partcipantsListAlwaysOpen = ref<boolean>(true)
-const isRecurring = ref<boolean>(false)
 
 const form = reactive<IEvent>({
 	...initialValues,
@@ -520,13 +519,13 @@ const onSubmitForm = async () => {
 
 	if (!isValid.value) return
 
-	if (partcipantsListAlwaysOpen.value) form.openParticipantsListDate = undefined
-
 	if (isRecurring.value) {
 		const nextDay = getNextDayOfWeek(form.recurringDay!)
 		form.datetime = nextDay
 		form.openParticipantsListDate = nextDay
 	}
+
+	if (partcipantsListAlwaysOpen.value) form.openParticipantsListDate = undefined
 
 	try {
 		loading.value = true
