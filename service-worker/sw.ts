@@ -21,13 +21,13 @@ if (import.meta.env.DEV) allowlist = [/^\/$/]
 
 registerRoute(new NavigationRoute(createHandlerBoundToURL('/'), {allowlist}))
 
-// self.addEventListener('push', (event) => {
-// 	const data = event?.data?.json()
-// 	self.registration.showNotification(data.title, {
-// 		body: data.body,
-// 		icon: '/icon.png',
-// 	})
-// })
+self.addEventListener('push', (event) => {
+	const data = event?.data?.json()
+	self.registration.showNotification(data.title, {
+		body: data.body,
+		icon: '/icon.png',
+	})
+})
 
 self.skipWaiting()
 clientsClaim()

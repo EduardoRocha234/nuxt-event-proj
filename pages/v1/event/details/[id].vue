@@ -6,12 +6,55 @@
 					<button
 						class="h-10 w-10 border flex justify-center items-center rounded-full cursor-pointer"
 					>
+						<!-- {{ !userNotificationConfig }} -->
 						<Icon
-							name="material-symbols:bookmark-outline"
+							@click="showTemplate($event)"
+							name="ic:round-notifications-active"
 							:size="24"
-							class="text-slate-600/90"
+							:class="{
+								'text-slate-600/90': !userNotificationConfig,
+								'text-blue-600/90': userNotificationConfig,
+							}"
 						/>
 					</button>
+					<ConfirmPopup group="templating">
+						<template #container="{acceptCallback, rejectCallback}">
+							<div
+								class="flex flex-col items-center w-full gap-2 border-b border-surface-200 p-4 mb-2 pb-0"
+							>
+								<Icon
+									:name="
+										!userNotificationConfig
+											? 'ic:round-notifications-active'
+											: 'ic:round-notifications-off'
+									"
+									:size="24"
+									class="text-slate-600/90"
+								/>
+								<p v-if="!userNotificationConfig">
+									Deseja receber notificações sobre este evento?
+								</p>
+								<p v-if="userNotificationConfig">
+									Deseja desativar as notificações para este evento?
+								</p>
+							</div>
+							<div class="flex justify-end items-center w-full gap-2 py-2 px-2">
+								<Button
+									size="small"
+									outlined
+									class="w-20"
+									@click="rejectCallback"
+									>Cancelar</Button
+								>
+								<Button
+									size="small"
+									class="w-20"
+									@click="acceptCallback"
+									>Sim</Button
+								>
+							</div>
+						</template>
+					</ConfirmPopup>
 					<AppButtonDropdownV1>
 						<template #content>
 							<div
@@ -107,6 +150,51 @@ const eventId = ref<number | undefined>(Number(route.params.id))
 const timeRemaining = ref<number>(0)
 const timerInterval = ref<NodeJS.Timeout>()
 const eventParticipantList = ref<IParticipant[]>([])
+const userNotificationConfig = ref<{
+	eventId: number
+	userId: string
+	id: number
+}>()
+
+const confirm = useConfirm()
+
+const showTemplate = (event: any) => {
+	confirm.require({
+		target: event.currentTarget,
+		group: 'templating',
+		rejectProps: {
+			label: 'Cancel',
+			outlined: true,
+		},
+		acceptProps: {
+			label: 'Confirm',
+		},
+		accept: async () => {
+			const body = {
+				userId: user?.userId,
+				eventId: eventId.value,
+			}
+
+			const req = await $api.raw(
+				`/api/v1/notifications/save-user-event-notification`,
+				{
+					method: 'POST',
+					body,
+				}
+			)
+
+			if (req.status === 201) {
+				$toast.success('Você irá receber notificações sobre este evento!')
+				return
+			}
+
+			$toast.error(
+				'Ocorreu um erro ao configurar as notificações para este evento!'
+			)
+		},
+		reject: () => {},
+	})
+}
 
 const formattedTime = computed(() => {
 	const seconds = Math.floor((timeRemaining.value / 1000) % 60)
@@ -151,6 +239,48 @@ const {data: event} = await useFetch<IEvent>(
 		},
 	}
 )
+
+// const {data: event} = await useFetch<IEvent>(
+// 	`/api/v1/notifications/user-has-nofification-config`,
+// 	{
+// 		retry: false,
+// 		server: false,
+// 		onResponse: ({response}) => {
+// 			if (response.status === 200) {
+// 				eventParticipantList.value = response._data.participants ?? []
+// 				return
+// 			}
+
+// 			$toast.error('Ocorreu um erro ao buscar o evento')
+// 		},
+// 	}
+// )
+
+const userHasNotificationConfig = async () => {
+	const req = await $api.raw(
+		`/api/v1/notifications/user-has-nofification-config`,
+		{
+			retry: false,
+			server: false,
+			params: {
+				userId: user?.userId,
+				eventId: eventId.value,
+			},
+		}
+	)
+
+	if (req.status === 200) {
+		userNotificationConfig.value = req._data
+		return
+	}
+
+	if (req.status === 404) {
+		console.log('oopes')
+		return
+	}
+
+	// $toast.error('Ocorreu um erro ao verificar as configurações de notificações.')
+}
 
 const joinInEvent = async () => {
 	const req = await $api.raw(
@@ -201,8 +331,10 @@ $socket.on('removeParticipant', async (event: IRemoveParticipantWSEvent) => {
 	}
 })
 
-onMounted(() => {
+onMounted(async () => {
 	footerbarStore.setFooterBarVisible(false)
+
+	await userHasNotificationConfig()
 
 	updateTimeRemaining()
 

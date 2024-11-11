@@ -11,8 +11,6 @@
 				/>
 			</button>
 		</div>
-		{{ ole }}
-		<button @click="requestPermission">Allow Notifications</button>
 		<div
 			v-if="data && data.events.length > 0"
 			class="mt-5 flex flex-col gap-4 mb-8"
@@ -53,6 +51,7 @@ import {useFooterBarStore} from '~/stores/footerBar.store'
 
 const {sportIdFilter, nameFilter} = storeToRefs(useEventStore())
 const {user} = useUserStore()
+const {$messaging} = useNuxtApp()
 
 const footerStore = useFooterBarStore()
 
@@ -97,14 +96,10 @@ const handleScroll = () => {
 }
 
 const setToken = async () => {
-	console.log('Teste')
-	// importar firebase/messaging
-
 	const serviceWorkerRegistration = await navigator.serviceWorker.register(
 		'/app/firebase-messaging-sw.js'
 	)
 
-	const {$messaging} = useNuxtApp()
 	const token = await getToken($messaging, {
 		serviceWorkerRegistration,
 		vapidKey:
