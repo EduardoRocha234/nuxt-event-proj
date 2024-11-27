@@ -3,22 +3,18 @@
 		<AppHeadPage>
 			<template #content-right>
 				<div class="flex justify-center items-center gap-4">
-					<button
-						class="h-10 w-10 border flex justify-center items-center rounded-full cursor-pointer"
-					>
-						<!-- {{ !userNotificationConfig }} -->
-						<Icon
-							@click="showTemplate($event)"
-							name="ic:round-notifications-active"
-							:size="24"
-							:class="{
-								'text-slate-600/90': !userNotificationConfig,
-								'text-blue-600/90': userNotificationConfig,
-							}"
-						/>
-					</button>
-					<ConfirmPopup group="templating">
-						<template #container="{acceptCallback, rejectCallback}">
+					<AppButtonDropdownV1>
+						<template #icon>
+							<Icon
+								name="ic:round-notifications-active"
+								:size="24"
+								:class="{
+									'text-slate-600/90': !userNotificationConfig,
+									'text-blue-600/90': userNotificationConfig,
+								}"
+							/>
+						</template>
+						<template #content="{hide}">
 							<div
 								class="flex flex-col items-center w-full gap-2 border-b border-surface-200 p-4 mb-2 pb-0"
 							>
@@ -34,61 +30,60 @@
 								<p v-if="!userNotificationConfig">
 									Deseja receber notificações sobre este evento?
 								</p>
-								<p v-if="userNotificationConfig">
-									Deseja desativar as notificações para este evento?
-								</p>
+								<p v-else>Deseja desativar as notificações para este evento?</p>
 							</div>
 							<div class="flex justify-end items-center w-full gap-2 py-2 px-2">
 								<Button
 									size="small"
 									outlined
 									class="w-20"
-									@click="rejectCallback"
+									@click="hide"
 									>Cancelar</Button
 								>
 								<Button
 									size="small"
 									class="w-20"
-									@click="acceptCallback"
+									@click="
+										() => {
+											accept()
+											hide()
+										}
+									"
 									>Sim</Button
 								>
 							</div>
 						</template>
-					</ConfirmPopup>
+					</AppButtonDropdownV1>
 					<AppButtonDropdownV1>
+						<template #icon>
+							<Icon
+								name="material-symbols:share"
+								:size="24"
+								class="text-slate-500"
+							/>
+						</template>
 						<template #content>
-							<div
-								class="absolute right-0 -bottom-[11rem] border rounded-md bg-white shadow-lg z-50 w-48 p-3 flex flex-col gap-2"
+							<ul
+								class="flex flex-col gap-1 w-60 *:flex *:w-full *:items-center *:gap-2 *:p-1 *:rounded-md *:transition-colors *:cursor-pointer"
 							>
-								<div
-									class="w-full h-10 flex items-center gap-1 hover:bg-slate-100 p-2 rounded-md text-sm text-slate-600 font-semibold"
+								<li
+									class="hover:bg-slate-200"
+									@click="startShare"
 								>
 									<Icon
 										name="mdi:share"
-										:size="20"
+										size="23"
 									/>
-									<span> Compartilhar Racha </span>
-								</div>
-								<div
-									class="w-full h-10 flex items-center gap-1 hover:bg-slate-100 p-1 rounded-md text-sm text-slate-600 font-semibold"
-								>
+									Compartilhar evento
+								</li>
+								<li class="hover:bg-slate-200">
 									<Icon
 										name="mdi:share"
-										:size="20"
-										class="w-10 h-10"
+										size="23"
 									/>
-									<span> Compartilhar lista de participantes </span>
-								</div>
-								<div
-									class="w-full h-10 flex items-center gap-1 hover:bg-slate-100 p-1 rounded-md text-sm text-slate-600 font-semibold"
-								>
-									<Icon
-										name="mdi:share"
-										:size="22"
-									/>
-									<span>Enviar Convite</span>
-								</div>
-							</div>
+									Compartilhar lista de participantes
+								</li>
+							</ul>
 						</template>
 					</AppButtonDropdownV1>
 				</div>
@@ -144,6 +139,18 @@ import type {
 const {$api, $toast, $socket} = useNuxtApp()
 const {user} = useUserStore()
 
+const {share, isSupported} = useShare()
+
+const startShare = () => {
+	if (!isSupported.value) return
+
+	share({
+		title: 'Compartinhar evento',
+		text: 'Venha participar',
+		url: route.fullPath,
+	})
+}
+
 const footerbarStore = useFooterBarStore()
 const route = useRoute()
 const eventId = ref<number | undefined>(Number(route.params.id))
@@ -151,9 +158,9 @@ const timeRemaining = ref<number>(0)
 const timerInterval = ref<NodeJS.Timeout>()
 const eventParticipantList = ref<IParticipant[]>([])
 const userNotificationConfig = ref<{
-	eventId: number
-	userId: string
-	id: number
+	eventId?: number
+	userId?: string
+	id?: number
 }>()
 
 const confirm = useConfirm()
@@ -170,30 +177,70 @@ const showTemplate = (event: any) => {
 			label: 'Confirm',
 		},
 		accept: async () => {
-			const body = {
-				userId: user?.userId,
-				eventId: eventId.value,
-			}
-
-			const req = await $api.raw(
-				`/api/v1/notifications/save-user-event-notification`,
-				{
-					method: 'POST',
-					body,
-				}
-			)
-
-			if (req.status === 201) {
-				$toast.success('Você irá receber notificações sobre este evento!')
+			if (userNotificationConfig.value) {
+				await disableNotification()
 				return
 			}
 
-			$toast.error(
-				'Ocorreu um erro ao configurar as notificações para este evento!'
-			)
+			await applyNotification()
 		},
 		reject: () => {},
 	})
+}
+
+const accept = async () => {
+	if (userNotificationConfig.value) {
+		await disableNotification()
+		return
+	}
+
+	await applyNotification()
+}
+
+const applyNotification = async () => {
+	const body = {
+		userId: user?.userId,
+		eventId: eventId.value,
+	}
+
+	const req = await $api.raw(
+		`/api/v1/notifications/save-user-event-notification`,
+		{
+			method: 'POST',
+			body,
+		}
+	)
+
+	if (req.status === 201) {
+		$toast.success('Você irá receber notificações sobre este evento!')
+		userNotificationConfig.value = body
+		return
+	}
+
+	$toast.error(
+		'Ocorreu um erro ao configurar as notificações para este evento!'
+	)
+}
+
+const disableNotification = async () => {
+	const {eventId, userId} = userNotificationConfig.value!
+
+	const req = await $api.raw(
+		`/api/v1/notifications/disable/${userId}/${eventId}`,
+		{
+			method: 'DELETE',
+		}
+	)
+
+	if (req.status === 200) {
+		$toast.success('Você irá receber notificações sobre este evento!')
+		userNotificationConfig.value = undefined
+		return
+	}
+
+	$toast.error(
+		'Ocorreu um erro ao configurar as notificações para este evento!'
+	)
 }
 
 const formattedTime = computed(() => {
@@ -239,22 +286,6 @@ const {data: event} = await useFetch<IEvent>(
 		},
 	}
 )
-
-// const {data: event} = await useFetch<IEvent>(
-// 	`/api/v1/notifications/user-has-nofification-config`,
-// 	{
-// 		retry: false,
-// 		server: false,
-// 		onResponse: ({response}) => {
-// 			if (response.status === 200) {
-// 				eventParticipantList.value = response._data.participants ?? []
-// 				return
-// 			}
-
-// 			$toast.error('Ocorreu um erro ao buscar o evento')
-// 		},
-// 	}
-// )
 
 const userHasNotificationConfig = async () => {
 	const req = await $api.raw(

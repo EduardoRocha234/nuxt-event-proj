@@ -53,7 +53,7 @@
 							route.path.includes('events-joined'),
 					}"
 				>
-					Inscrições
+					Na lista
 				</span>
 			</NuxtLink>
 		</div>

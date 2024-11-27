@@ -175,6 +175,7 @@
 						show-button-bar
 						fluid
 						icon-display="input"
+						touch-ui
 						:invalid="!!getError('datetime')"
 					/>
 					<span
@@ -503,7 +504,18 @@ const getNextDayOfWeek = (dayOfWeek: EdaysOfWeek) => {
 
 	const today = dayjs()
 	const todayDay = today.day()
+
 	const targetDay = daysOfWeekMap[dayOfWeek]
+
+	if (todayDay === targetDay) {
+		const now = today.format('HH:mm')
+		const startTime = dayjs(form.startTime, 'HH:mm').format('HH:mm')
+
+		if (now < startTime) {
+			return dayjs(today.format('YYYY-MM-DD')).toDate()
+		}
+	}
+
 
 	let daysUntilNextTarget = targetDay - todayDay
 	if (daysUntilNextTarget <= 0) {
