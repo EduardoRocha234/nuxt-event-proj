@@ -161,10 +161,10 @@
 </template>
 
 <script setup lang="ts">
+import type Popover from 'primevue/popover'
 import type {IEventFilterParams} from '~/interfaces'
 
-const dateSelectPopover = ref<any>(null)
-
+const dateSelectPopover = ref<InstanceType<typeof Popover> | null>(null)
 const toggle = (event: any) => {
 	dateSelectPopover.value?.toggle(event)
 }
@@ -196,16 +196,15 @@ const periodoParams = reactive({
 	...initPerParamsValues,
 })
 
-const dateSelected = ref<string>()
+const dateSelected = ref<Date>()
 const sportIdSelected = ref<number | undefined>()
 
-const filterParamsInitValues: Omit<IEventFilterParams, 'page' | 'pageSize'> =
-	{
-		sportId: undefined,
-		initialPeriod: undefined,
-		finalPeriod: undefined,
-		locale: undefined,
-	}
+const filterParamsInitValues: Omit<IEventFilterParams, 'page' | 'pageSize'> = {
+	sportId: undefined,
+	initialPeriod: undefined,
+	finalPeriod: undefined,
+	locale: undefined,
+}
 
 const filterParams = reactive<Omit<IEventFilterParams, 'page' | 'pageSize'>>({
 	...filterParamsInitValues,
@@ -214,8 +213,8 @@ const filterParams = reactive<Omit<IEventFilterParams, 'page' | 'pageSize'>>({
 watch(dateSelected, (nv) => {
 	if (nv) {
 		Object.assign(periodoParams, initPerParamsValues)
-		filterParams.initialPeriod = new Date(nv as string).toISOString()
-		filterParams.finalPeriod = new Date(nv as string).toISOString()
+		filterParams.initialPeriod = dayjs(nv).toISOString()
+		filterParams.finalPeriod = dayjs(nv).toISOString()
 	} else {
 		filterParams.initialPeriod = undefined
 		filterParams.finalPeriod = undefined
@@ -230,6 +229,7 @@ const selectPeriodo = (period: 'today' | 'tomorrow' | 'thisWeek') => {
 	dateSelected.value = undefined
 
 	const periodSelectedValue = !periodoParams[period]
+	const today = dayjs()
 
 	Object.assign(periodoParams, initPerParamsValues)
 	periodoParams[period] = periodSelectedValue
@@ -241,24 +241,24 @@ const selectPeriodo = (period: 'today' | 'tomorrow' | 'thisWeek') => {
 	}
 
 	if (period === 'today') {
-		filterParams.initialPeriod = new Date().toISOString()
-		filterParams.finalPeriod = new Date().toISOString()
+		filterParams.initialPeriod = today.format('YYYY-MM-DD')
+		filterParams.finalPeriod = today.format('YYYY-MM-DD')
 		return
 	}
 
 	if (period === 'tomorrow') {
-		const faterTomorrowDay = dayjs().add(2, 'day').startOf('day').format()
+		const tomorrowDay = today.add(1, 'day')
 
-		filterParams.initialPeriod = new Date().toISOString()
-		filterParams.finalPeriod = new Date(faterTomorrowDay).toISOString()
+		filterParams.initialPeriod = tomorrowDay.format('YYYY-MM-DD')
+		filterParams.finalPeriod = tomorrowDay.format('YYYY-MM-DD')
 		return
 	}
 
 	if (period === 'thisWeek') {
-		const lastDayOfWeek = dayjs().endOf('week').format()
+		const lastDayOfWeek = today.endOf('week')
 
-		filterParams.initialPeriod = new Date().toISOString()
-		filterParams.finalPeriod = new Date(lastDayOfWeek).toISOString()
+		filterParams.initialPeriod = today.format('YYYY-MM-DD')
+		filterParams.finalPeriod = lastDayOfWeek.format('YYYY-MM-DD')
 		return
 	}
 }
